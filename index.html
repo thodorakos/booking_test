@@ -3,1141 +3,997 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Alder — Barbershop · SoHo, New York</title>
-<meta name="description" content="Master barbers, honest prices, appointments that run on the minute. Book a chair at Alder, SoHo.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231d1d1f'/><text x='32' y='45' font-family='Helvetica' font-size='36' font-weight='700' fill='%23fff' text-anchor='middle'>A</text></svg>">
+<title>Alder — Barbershop in SoHo, New York</title>
+<meta name="description" content="Master barbers, honest prices, and appointments that run on the minute. Book a chair at Alder in SoHo, New York.">
+<meta name="theme-color" content="#f0f2ec">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' rx='14' fill='%231c1b18'/><text x='32' y='45' font-family='Georgia,serif' font-size='38' fill='%23e4cfae' text-anchor='middle'>A</text></svg>">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Alder — Barbershop in SoHo, New York">
+<meta property="og:description" content="Master barbers, honest prices, and appointments that run on the minute. Book a chair at Alder in SoHo.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BarberShop",
+  "name": "Alder",
+  "description": "Master barbers, honest prices, and appointments that run on the minute in SoHo, New York.",
+  "telephone": "+1-212-555-0184",
+  "email": "chair@alder.shop",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "228 Mercer Street",
+    "addressLocality": "New York",
+    "addressRegion": "NY",
+    "postalCode": "10012",
+    "addressCountry": "US"
+  },
+  "openingHoursSpecification": [
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday"],
+      "opens": "10:00",
+      "closes": "20:00"
+    },
+    {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": "Saturday",
+      "opens": "09:00",
+      "closes": "18:00"
+    }
+  ]
+}
+</script>
 <style>
-/* ---------- Tokens ---------- */
 :root{
-  --ink:#1d1d1f; --ink2:#6e6e73; --ink3:#86868b;
-  --hair:rgba(0,0,0,.08); --hair2:rgba(0,0,0,.14);
-  --bg:#ffffff; --bg2:#f5f5f7;
-  --acc:#8a6a3d; --acc-soft:rgba(138,106,61,.1);
-  --nav-h:60px;
-  --ease:cubic-bezier(.16,1,.3,1);
+  --bg:#f0f2ec;
+  --surface:#e5e8de;
+  --surface-2:#d8ddd0;
+  --ink:#1b1d19;
+  --ink-2:#454a41;
+  --ink-3:#5b6155;
+  --line:rgba(27,29,25,.13);
+  --line-2:rgba(27,29,25,.25);
+  --acc:#755a2d;
+  --acc-soft:rgba(117,90,45,.14);
+  --acc-light:#e4cfae;
+  --nav-h:64px;
+  --ease:cubic-bezier(.22,1,.36,1);
 }
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-body{font-family:'Instrument Sans','Helvetica Neue',Helvetica,sans-serif;color:var(--ink);background:var(--bg);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;color-scheme:light}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;caret-color:var(--acc)}
+h1,h2,h3,p,blockquote,figure,dl,dd{margin:0}
+ul{list-style:none;margin:0;padding:0}
+img{display:block;max-width:100%;height:auto}
 a{color:inherit;text-decoration:none}
-button{font-family:inherit;color:inherit;background:none;border:none;cursor:pointer}
-::selection{background:rgba(138,106,61,.18)}
-:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:6px}
-.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
-
-/* ---------- Icon sizes (classes are copied onto the SVG) ---------- */
-.ic-14{width:14px;height:14px;flex:none}
-.ic-16{width:16px;height:16px;flex:none}
-.ic-18{width:18px;height:18px;flex:none}
-.ic-20{width:20px;height:20px;flex:none}
-.ic-24{width:24px;height:24px;flex:none}
-
-/* ---------- Reveal on scroll ---------- */
-.rv{opacity:0;transform:translateY(26px);transition:opacity .8s ease,transform .8s var(--ease)}
-.rv.in{opacity:1;transform:none}
-.rv[data-d="1"]{transition-delay:.08s}
-.rv[data-d="2"]{transition-delay:.16s}
-.rv[data-d="3"]{transition-delay:.26s}
-.rv[data-d="4"]{transition-delay:.4s}
-
-/* ---------- Pages ---------- */
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+svg{display:block}
+a,button{touch-action:manipulation}
+::selection{background:var(--acc-light);color:var(--ink)}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px;border-radius:4px}
+[hidden]{display:none !important}
+.wrap{width:100%;max-width:1160px;margin-inline:auto;padding-inline:clamp(20px,4vw,32px)}
+.skip-link{position:fixed;top:12px;left:12px;z-index:300;padding:11px 18px;border-radius:999px;background:var(--ink);color:#fff;font-size:14px;font-weight:600;transform:translateY(-160%);transition:transform .2s ease}
+.skip-link:focus{transform:none}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.control-input{position:absolute;inline-size:1px;block-size:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0}
+.ic{flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ic-12{width:12px;height:12px}
+.ic-14{width:14px;height:14px}
+.ic-16{width:16px;height:16px}
+.ic-18{width:18px;height:18px}
+.ic-20{width:20px;height:20px}
+.ic-24{width:24px;height:24px}
+.star{fill:currentColor;stroke:none}
 .page{display:none}
-.page.on{display:block;animation:pageIn .55s var(--ease)}
-@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.page.on{display:block;animation:pageIn .35s ease both}
+@keyframes pageIn{from{opacity:0}to{opacity:1}}
 
-/* ---------- Shared type ---------- */
-.eyebrow{font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:16px}
-h2.sec-title{font-size:clamp(32px,4.4vw,52px);font-weight:600;letter-spacing:-.025em;line-height:1.06}
-.lead{font-size:18px;color:var(--ink2);line-height:1.62;max-width:600px;margin-top:22px}
-.sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:32px;flex-wrap:wrap;margin-bottom:14px}
-
-/* ---------- Pills & links ---------- */
-.pill{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:0 28px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:600;letter-spacing:.01em;transition:background .25s,transform .2s}
-.pill:hover{background:#000}
-.pill:active{transform:scale(.97)}
-.pill-sm{height:34px;padding:0 16px;font-size:13px}
-.pill-block{width:100%}
-.link-arrow{display:inline-flex;align-items:center;gap:7px;font-size:15px;font-weight:600;color:var(--ink);transition:color .25s}
-.link-arrow .lucide{transition:transform .3s var(--ease)}
-.link-arrow:hover{color:var(--acc)}
-.link-arrow:hover .lucide{transform:translateX(4px)}
-
-/* ---------- Nav ---------- */
-.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;background:rgba(255,255,255,.72);-webkit-backdrop-filter:saturate(180%) blur(18px);backdrop-filter:saturate(180%) blur(18px);border-bottom:1px solid transparent;transition:border-color .3s,background .3s}
-.nav.scrolled{border-bottom-color:var(--hair);background:rgba(255,255,255,.86)}
-.nav-in{max-width:1140px;margin:0 auto;height:100%;padding:0 24px;display:flex;align-items:center;gap:36px}
-.brand{display:inline-flex;align-items:center;gap:9px;font-size:15px;font-weight:700;letter-spacing:.18em;color:var(--ink)}
-.brand .lucide{color:var(--acc)}
-.nav-links{display:flex;gap:30px;margin-left:12px}
-.nav-links a{font-size:14px;font-weight:500;color:var(--ink2);transition:color .2s}
-.nav-links a:hover,.nav-links a.active{color:var(--ink)}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:600;letter-spacing:.01em;line-height:1;border:1px solid transparent;transition:background .2s ease,color .2s ease,transform .16s ease}
+.btn:hover{background:var(--acc);color:#fff}
+.btn:active{transform:scale(.985)}
+.btn .ic{transition:transform .25s var(--ease)}
+.btn:hover .ic{transform:translateX(3px)}
+.btn:disabled{background:var(--surface-2);color:var(--ink-3);cursor:not-allowed;transform:none}
+.btn:disabled:hover{background:var(--surface-2);color:var(--ink-3)}
+.btn-block{width:100%}
+.btn-sm{min-height:40px;padding:0 18px;font-size:13px}
+.btn-lg{min-height:56px;padding:0 30px;font-size:16px}
 .nav-book .short{display:none}
-.burger{display:none;padding:8px;margin-right:-8px}
-.burger .close-ic{display:none}
-body.menu-open .burger .menu-ic{display:none}
-body.menu-open .burger .close-ic{display:block}
-body.menu-open{overflow:hidden}
 
-/* ---------- Mobile menu ---------- */
-.mmenu{position:fixed;inset:var(--nav-h) 0 0 0;background:#fff;z-index:90;padding:28px 28px 40px;display:flex;flex-direction:column;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
-.mmenu.open{opacity:1;visibility:visible}
-.mmenu a.big{font-size:32px;font-weight:600;letter-spacing:-.02em;padding:16px 0;border-bottom:1px solid var(--hair);transform:translateY(12px);opacity:0;transition:transform .5s var(--ease),opacity .5s ease}
-.mmenu.open a.big:nth-child(1){transition-delay:.05s}
-.mmenu.open a.big:nth-child(2){transition-delay:.12s}
-.mmenu.open a.big:nth-child(3){transition-delay:.19s}
-.mmenu.open a.big{transform:none;opacity:1}
-.mmenu-meta{margin-top:auto;font-size:13px;color:var(--ink3);line-height:1.8}
-.mmenu-meta a{color:var(--ink2);font-weight:600}
-@media(min-width:761px){.mmenu{display:none}}
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;background:rgba(240,242,236,.86);-webkit-backdrop-filter:saturate(160%) blur(16px);backdrop-filter:saturate(160%) blur(16px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;gap:24px;width:100%;max-width:1160px;height:100%;margin-inline:auto;padding-inline:clamp(20px,4vw,32px)}
+.brand{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--ink)}
+.brand .ic{color:var(--acc)}
+.nav-right{display:flex;align-items:center;gap:6px;margin-left:auto}
+.nav-phone{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);transition:color .2s ease,background .2s ease}
+.nav-phone:hover{color:var(--ink);background:var(--surface)}
+.nav-phone .ic{color:var(--acc)}
+body[data-route="book"] .nav-book{display:none}
 
-/* ---------- Hero ---------- */
-.hero{padding:calc(var(--nav-h) + 86px) 0 100px;text-align:center}
-.hero h1{font-size:clamp(48px,7.6vw,96px);font-weight:600;letter-spacing:-.035em;line-height:1.01}
-.hero-sub{max-width:560px;margin:26px auto 0;font-size:19px;color:var(--ink2);line-height:1.55}
-.hero-cta{margin-top:38px;display:flex;gap:30px;justify-content:center;align-items:center;flex-wrap:wrap}
-.hero-img{margin-top:84px;position:relative}
-.hero-img img{width:100%;aspect-ratio:21/9;object-fit:cover;border-radius:28px;filter:grayscale(1);transition:filter .8s ease}
-.hero-img:hover img{filter:grayscale(0)}
-.chip-loc{position:absolute;left:20px;bottom:20px;display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.78);-webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%);border-radius:999px;padding:9px 16px;font-size:13px;font-weight:600}
-.chip-loc .lucide{color:var(--acc)}
+.hero{padding-top:calc(var(--nav-h) + clamp(40px,7vw,88px));padding-bottom:clamp(64px,8vw,104px)}
+.hero-in{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(40px,6vw,88px);align-items:center}
+.hero h1{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(3.4rem,6.8vw,6rem);font-weight:400;line-height:.95;letter-spacing:-.035em;text-wrap:balance}
+.hero h1 em{font-style:italic;color:var(--acc)}
+.hero-sub{max-width:46ch;margin-top:26px;font-size:clamp(1rem,1.5vw,1.125rem);line-height:1.6;color:var(--ink-2);text-wrap:pretty}
+.hero-actions{display:flex;flex-direction:column;align-items:flex-start;gap:14px;margin-top:34px}
+.hero-next{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;line-height:1.5;color:var(--ink-3)}
+.hero-next .ic{color:var(--acc)}
+.hero-media{position:relative;width:100%;max-width:620px;justify-self:end;aspect-ratio:4/5;border-radius:26px;overflow:hidden;background:var(--surface);box-shadow:0 24px 60px rgba(27,29,25,.11)}
+.hero-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.04)}
 
-/* ---------- Stats ---------- */
-.stats{padding:90px 0}
-.stats-grid{display:grid;grid-template-columns:repeat(3,1fr)}
-.stat{padding:8px 34px;text-align:center}
-.stat + .stat{border-left:1px solid var(--hair)}
-.stat-n{font-size:clamp(44px,5vw,64px);font-weight:600;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-.stat-l{font-size:14px;color:var(--ink2);margin-top:6px}
+.section{padding:clamp(64px,9vw,112px) 0}
+.section h2{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(2.25rem,4.4vw,3.6rem);font-weight:400;line-height:1.02;letter-spacing:-.025em;text-wrap:balance}
+.section-sub{max-width:52ch;margin-top:16px;font-size:17px;line-height:1.6;color:var(--ink-2);text-wrap:pretty}
+.section-head{margin-bottom:clamp(32px,5vw,52px)}
+.price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(28px,4vw,56px)}
+.price-group h3{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);padding:0 8px 6px}
+.price-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto 16px;align-items:center;gap:12px;min-height:48px;padding:0 8px;border-top:1px solid var(--line);font-size:15px;font-weight:600;color:var(--ink);transition:background .18s ease,color .18s ease}
+.price-list li:last-child .price-row{border-bottom:1px solid var(--line)}
+.price-row:hover{background:var(--surface)}
+.pr-dur{font-size:12px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.pr-price{font-weight:600;font-variant-numeric:tabular-nums}
+.pr-go{display:grid;place-items:center;color:var(--ink-3);transition:color .18s ease,transform .22s var(--ease)}
+.price-row:hover .pr-go{color:var(--acc);transform:translateX(2px)}
+.price-help{max-width:60ch;margin-top:30px;font-size:14px;line-height:1.65;color:var(--ink-3)}
+.price-help a{font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-2)}
+.price-help a:hover{color:var(--acc);text-decoration-color:var(--acc)}
+.barber-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,28px)}
+.barber-card{display:flex;flex-direction:column;min-width:0}
+.barber-media{display:block;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:var(--surface)}
+.barber-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:filter .5s ease,transform .7s var(--ease)}
+.barber-card:hover .barber-media img,.barber-card:focus-visible .barber-media img{filter:grayscale(0);transform:scale(1.025)}
+.barber-info{display:block;padding-top:14px}
+.barber-name{font-size:16px;font-weight:600;letter-spacing:-.01em;line-height:1.3}
+.barber-spec{margin-top:3px;font-size:13px;line-height:1.45;color:var(--ink-2)}
+.barber-book{display:inline-flex;align-items:center;gap:6px;margin-top:10px;font-size:13px;font-weight:600;color:var(--ink-3);transition:color .2s ease}
+.barber-book .ic{transition:transform .25s var(--ease)}
+.barber-card:hover .barber-book,.barber-card:focus-visible .barber-book{color:var(--acc)}
+.barber-card:hover .barber-book .ic,.barber-card:focus-visible .barber-book .ic{transform:translateX(3px)}
+.quote{padding:96px 32px;background:var(--surface)}
+.rating{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.rating-stars{display:flex;gap:2px;color:var(--acc)}
+.rating-stars .ic{stroke:none}
+.quote blockquote{max-width:920px;margin-top:26px}
+.quote blockquote p{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(1.9rem,4vw,3rem);font-weight:400;line-height:1.3;letter-spacing:-.02em;text-wrap:balance}
+.quote blockquote footer{margin-top:24px;font-size:13px;font-weight:500;color:var(--ink-3)}
+.visit-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:clamp(40px,6vw,88px);align-items:start}
+.visit-copy .btn{margin-top:30px}
+.fineprint{max-width:46ch;margin-top:16px;font-size:13px;line-height:1.6;color:var(--ink-3)}
+.visit-facts{border-top:1px solid var(--line)}
+.visit-facts > div{display:grid;grid-template-columns:84px minmax(0,1fr);gap:18px;padding:16px 0;border-bottom:1px solid var(--line)}
+.visit-facts dt{padding-top:2px;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.visit-facts dd{font-size:14px;line-height:1.7;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.visit-facts a{font-weight:600;color:var(--ink);text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--line-2)}
+.visit-facts a:hover{color:var(--acc);text-decoration-color:var(--acc)}
+.visit-facts a .ic{display:inline;vertical-align:-2px;margin-left:2px}
+.hours{display:grid;grid-template-columns:auto auto;gap:2px 24px;width:max-content;max-width:100%}
 
-/* ---------- Craft / zoom reveal ---------- */
-.craft{padding:120px 0 110px}
-.zoomReveal{--x:38%;position:relative;margin-top:60px;aspect-ratio:16/8;border-radius:28px;overflow:hidden;touch-action:pan-y;cursor:ew-resize;user-select:none;-webkit-user-select:none}
-.zr-base{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
-.zr-top{position:absolute;inset:0;clip-path:inset(0 calc(100% - var(--x)) 0 0)}
-.zr-zoom{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1);transform:scale(2.1);transform-origin:62% 40%}
-.zr-line{position:absolute;top:0;bottom:0;left:var(--x);width:2px;background:#fff;box-shadow:0 0 14px rgba(0,0,0,.4);transform:translateX(-50%);pointer-events:none}
-.zr-grip{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:46px;height:46px;border-radius:50%;background:#fff;display:grid;place-items:center;box-shadow:0 4px 18px rgba(0,0,0,.28);cursor:ew-resize;pointer-events:auto;color:var(--ink)}
-.zr-grip:active{transform:translate(-50%,-50%) scale(.94)}
-.zr-tag{position:absolute;top:18px;padding:6px 13px;border-radius:999px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12px;font-weight:600;letter-spacing:.04em}
-.zr-tag-l{left:18px}.zr-tag-r{right:18px}
-.zr-hint{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:7px;padding:7px 14px;border-radius:999px;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);font-size:12px;font-weight:600;transition:opacity .4s}
-.zoomReveal.used .zr-hint{opacity:0}
+footer{border-top:1px solid var(--line);padding:28px 0 36px}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:12px;line-height:1.6;color:var(--ink-3)}
+.foot .brand{font-size:12px;letter-spacing:.16em;color:var(--ink)}
+.foot p{max-width:54ch}
+.foot-top{display:inline-flex;align-items:center;gap:6px;padding:8px 0;font-size:12px;font-weight:600;color:var(--ink-3);transition:color .2s ease}
+.foot-top:hover{color:var(--ink)}
 
-/* ---------- Services teaser (hover list) ---------- */
-.svcTeaser{padding:110px 0 40px}
-.svc-list{margin-top:44px}
-.svc-row{display:grid;grid-template-columns:1fr auto auto 26px;align-items:baseline;gap:28px;padding:26px 4px;border-top:1px solid var(--hair);color:var(--ink)}
-.svc-list .svc-row:last-child{border-bottom:1px solid var(--hair)}
-.svc-name{font-size:clamp(22px,3vw,30px);font-weight:550;letter-spacing:-.02em}
-.svc-meta{font-size:14px;color:var(--ink3);font-weight:500}
-.svc-price{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums;transition:color .25s}
-.svc-go{color:var(--ink3);display:grid;place-items:center;transition:transform .3s var(--ease),color .25s}
-.svc-row:hover .svc-go{color:var(--ink);transform:translate(2px,-2px)}
-.svc-row:hover .svc-price{color:var(--acc)}
-.floaty{position:fixed;top:0;left:0;width:220px;height:280px;border-radius:18px;overflow:hidden;pointer-events:none;z-index:60;opacity:0;transition:opacity .25s ease;box-shadow:0 24px 60px rgba(0,0,0,.2);will-change:transform}
-.floaty.on{opacity:1}
-.floaty img{width:100%;height:100%;object-fit:cover;filter:grayscale(1)}
+.book-head{padding-top:calc(var(--nav-h) + clamp(40px,6vw,64px));padding-bottom:clamp(28px,4vw,40px)}
+.book-head h1{font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(2.75rem,5.4vw,4.5rem);font-weight:400;line-height:.98;letter-spacing:-.03em;text-wrap:balance}
+.book-head p{max-width:56ch;margin-top:16px;font-size:16px;line-height:1.6;color:var(--ink-2);text-wrap:pretty}
+.book-grid{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:clamp(36px,5vw,64px);align-items:start;padding-bottom:clamp(72px,9vw,112px)}
+.steps{min-width:0}
+.step{padding-top:26px;margin-top:32px;border-top:1px solid var(--line);scroll-margin-top:calc(var(--nav-h) + 24px)}
+.step:first-child{margin-top:0}
+.step-head{margin-bottom:18px}
+.step-head h2{font-size:20px;font-weight:600;line-height:1.3;letter-spacing:-.015em}
+.opt-tag{margin-left:4px;font-size:12px;font-weight:500;letter-spacing:0;color:var(--ink-3)}
+.step-note{max-width:56ch;margin-top:14px;font-size:13px;line-height:1.6;color:var(--ink-3);text-wrap:pretty}
+#stepDetails:not([hidden]){animation:revealStep .4s var(--ease) both}
+@keyframes revealStep{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.service-groups{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px 40px}
+.svc-group h3{padding:0 10px 4px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.svc-opt{display:block;cursor:pointer}
+.svc-in{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:46px;padding:0 10px;border-top:1px solid var(--line);transition:background .18s ease}
+.svc-list > .svc-opt:last-child .svc-in{border-bottom:1px solid var(--line)}
+.svc-opt:hover .svc-in{background:var(--surface)}
+.svc-opt input:checked + .svc-in{background:var(--acc-soft)}
+.svc-opt input:focus-visible + .svc-in{outline:2px solid var(--acc);outline-offset:-2px;border-radius:4px}
+.opt-check{display:grid;place-items:center;width:20px;height:20px;border:1.5px solid var(--line-2);border-radius:50%;color:transparent;transition:background .18s ease,border-color .18s ease,color .18s ease}
+.svc-opt input:checked + .svc-in .opt-check,.bc-opt input:checked + .bc-in .bc-avatar{border-color:var(--acc);background:var(--acc);color:#fff}
+.opt-name{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;font-size:15px;font-weight:600;letter-spacing:-.005em;line-height:1.3}
+.opt-dur{font-size:12px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.opt-price{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.barber-choices{display:flex;flex-wrap:wrap;gap:16px 22px}
+.bc-opt{display:block;cursor:pointer;text-align:center}
+.bc-in{display:flex;flex-direction:column;align-items:center;gap:8px;padding:4px;border-radius:16px}
+.bc-avatar{display:grid;place-items:center;width:62px;height:62px;padding:3px;border:2px solid transparent;border-radius:50%;background:var(--bg);transition:border-color .2s ease,background .2s ease,color .2s ease}
+.bc-avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;filter:grayscale(1);transition:filter .4s ease}
+.bc-avatar.first{background:var(--acc-soft);border-color:var(--line);color:var(--acc);font-size:10px;font-weight:700;letter-spacing:.08em}
+.bc-name{font-size:12px;font-weight:600;line-height:1.3;color:var(--ink-3);transition:color .2s ease}
+.bc-opt:hover .bc-avatar img,.bc-opt:focus-within .bc-avatar img{filter:grayscale(0)}
+.bc-opt input:checked + .bc-in .bc-name{color:var(--ink)}
+.bc-opt input:focus-visible + .bc-in{outline:2px solid var(--acc);outline-offset:2px}
+.bc-opt input:checked + .bc-in .bc-avatar.first{background:var(--acc);border-color:var(--acc);color:#fff}
+.day-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:20px}
+.day-opt{display:block;min-width:0;cursor:pointer}
+.day-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:64px;border:1px solid var(--line);border-radius:12px;background:var(--bg);transition:border-color .18s ease,background .18s ease,color .18s ease}
+.day-opt:hover .day-in{border-color:var(--ink-3)}
+.day-dow{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);line-height:1.2}
+.day-num{font-size:17px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
+.day-opt input:checked + .day-in{background:var(--ink);border-color:var(--ink);color:#fff}
+.day-opt input:checked + .day-in .day-dow{color:rgba(255,255,255,.64)}
+.day-opt input:focus-visible + .day-in{outline:2px solid var(--acc);outline-offset:2px}
+.day-opt.is-off{cursor:not-allowed;opacity:.32}
+.day-opt.is-off .day-in{background:var(--surface)}
+.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.slot-opt{display:block;min-width:0;cursor:pointer}
+.slot-in{display:flex;align-items:center;justify-content:center;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;transition:border-color .18s ease,background .18s ease,color .18s ease}
+.slot-opt:hover .slot-in{border-color:var(--ink-3)}
+.slot-opt input:checked + .slot-in{background:var(--ink);border-color:var(--ink);color:#fff}
+.slot-opt input:focus-visible + .slot-in{outline:2px solid var(--acc);outline-offset:2px}
+.slot-opt.is-off{cursor:not-allowed;opacity:.3}
+.slot-opt.is-off .slot-in{background:var(--surface);text-decoration:line-through;text-decoration-color:var(--line-2)}
+.slots-empty{grid-column:1/-1;padding:8px 0;font-size:13px;line-height:1.6;color:var(--ink-3)}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field label{display:block;margin-bottom:7px;font-size:12px;font-weight:600}
+.field input{width:100%;height:48px;padding:0 14px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;transition:border-color .18s ease,box-shadow .18s ease}
+.field input::placeholder{color:var(--ink-3);opacity:1}
+.field input:hover{border-color:var(--ink-3)}
+.field input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.summary{position:sticky;top:calc(var(--nav-h) + 24px);padding:24px;border-radius:20px;border:1px solid rgba(27,29,25,.06);background:var(--surface)}
+.summary h2{margin-bottom:8px;font-size:16px;font-weight:600;letter-spacing:-.01em}
+.summary dl > div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.summary dt{flex:none;font-size:12px;font-weight:500;color:var(--ink-3)}
+.summary dd{min-width:0;font-size:13px;font-weight:600;text-align:right}
+.sum-total{display:flex;align-items:baseline;justify-content:space-between;padding:16px 0 2px}
+.sum-total span{font-size:13px;color:var(--ink-2)}
+.sum-total strong{font-size:28px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.pay-note{margin:4px 0 16px;font-size:12px;line-height:1.5;color:var(--ink-3)}
+.cancel-note{margin-top:12px;font-size:12px;line-height:1.55;color:var(--ink-3);text-wrap:pretty}
+.cancel-note a{font-weight:600;color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+.cancel-note a:hover{color:var(--acc)}
+.noscript{padding:calc(var(--nav-h) + 40px) 24px 24px;background:var(--surface);text-align:center;font-size:14px;line-height:1.6}
 
-/* ---------- Chairs strip ---------- */
-.chairTeaser{padding:110px 0 60px}
-.chairs-strip{max-width:1140px;margin:52px auto 0;padding:6px 24px 48px;display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
-.chairs-strip::-webkit-scrollbar{display:none}
-.chair-card{flex:0 0 248px;scroll-snap-align:start;color:var(--ink)}
-.chair-card:nth-child(even){transform:translateY(26px)}
-.chair-card img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:20px;filter:grayscale(1);transition:filter .5s ease}
-.chair-card:hover img{filter:grayscale(0)}
-.chair-card strong{display:block;margin-top:14px;font-size:17px;letter-spacing:-.01em}
-.chair-card span{font-size:14px;color:var(--ink2)}
+dialog.sheet{position:fixed;inset:0;width:min(480px,calc(100vw - 32px));height:max-content;max-height:calc(100dvh - 32px);margin:auto;padding:clamp(24px,4vw,36px);overflow:auto;border:0;border-radius:24px;background:var(--bg);color:var(--ink);box-shadow:0 30px 90px rgba(27,29,25,.3)}
+dialog.sheet[open]{animation:sheetIn .35s var(--ease) both}
+dialog.sheet::backdrop{background:rgba(27,29,25,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
+@keyframes sheetIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+.sheet-x{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--ink-3);transition:background .18s ease,color .18s ease}
+.sheet-x:hover{background:var(--surface);color:var(--ink)}
+.sheet-mark{display:grid;place-items:center;width:48px;height:48px;margin-bottom:18px;border-radius:50%;background:var(--acc-soft);color:var(--acc)}
+.sheet h2{padding-right:32px;font-family:'Newsreader',Georgia,'Times New Roman',serif;font-size:clamp(2rem,5vw,2.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
+.sheet-sub{margin-top:12px;font-size:14px;line-height:1.6;color:var(--ink-2);text-wrap:pretty}
+.recap{margin-top:22px;border-top:1px solid var(--line)}
+.recap > div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
+.recap dt{font-size:12px;color:var(--ink-3)}
+.recap dd{font-size:13px;font-weight:600;text-align:right}
+.sheet-fine{margin-top:18px;font-size:12px;line-height:1.6;color:var(--ink-3)}
+.sheet-fine a{font-weight:600;color:var(--ink-2);text-decoration:underline;text-underline-offset:2px}
+.sheet .btn{margin-top:18px}
+.sheet-demo{margin-top:12px;font-size:11px;line-height:1.5;color:var(--ink-3);text-align:center}
+body.modal-open{overflow:hidden}
+.page h1:focus{outline:none}
 
-/* ---------- Quotes ---------- */
-.quotes{padding:130px 0}
-.q-inner{display:flex;flex-direction:column;align-items:center;text-align:center}
-.stars{display:flex;gap:4px;margin-bottom:30px}
-.stars .lucide{width:15px;height:15px;fill:var(--acc);stroke:var(--acc)}
-.q-stack{display:grid;max-width:760px}
-.q{grid-area:1/1;opacity:0;transform:translateY(8px);transition:opacity .6s ease,transform .6s var(--ease);pointer-events:none}
-.q.on{opacity:1;transform:none;pointer-events:auto}
-.q p{font-size:clamp(24px,3.2vw,34px);font-weight:600;letter-spacing:-.015em;line-height:1.28}
-.q footer{margin-top:20px;font-size:14px;color:var(--ink3);font-weight:500}
-.q-dots{display:flex;gap:8px;margin-top:38px}
-.q-dots button{width:7px;height:7px;border-radius:50%;background:var(--hair2);padding:0;transition:background .3s,transform .3s}
-.q-dots button.on{background:var(--ink);transform:scale(1.3)}
-
-/* ---------- CTA band ---------- */
-.cta{background:var(--bg2);padding:120px 0;text-align:center}
-.cta h2{font-size:clamp(38px,5vw,60px);font-weight:600;letter-spacing:-.03em}
-.cta p{margin-top:16px;color:var(--ink2)}
-.cta .pill{margin-top:36px}
-.cta-meta{margin-top:30px !important;display:flex;gap:8px 22px;justify-content:center;flex-wrap:wrap;font-size:13px;color:var(--ink3);font-weight:500}
-.cta-meta span{display:inline-flex;align-items:center;gap:6px}
-.cta-meta .lucide{color:var(--acc)}
-
-/* ---------- Page head (inner pages) ---------- */
-.page-head{padding:calc(var(--nav-h) + 90px) 0 70px;text-align:center}
-.page-head h1{font-size:clamp(46px,6.5vw,80px);font-weight:600;letter-spacing:-.03em;line-height:1.02}
-.page-sub{max-width:540px;margin:22px auto 0;font-size:17px;color:var(--ink2);line-height:1.6}
-
-/* ---------- Services page ---------- */
-.svc-page-grid{display:grid;grid-template-columns:1fr 400px;gap:56px;align-items:start;padding-bottom:120px}
-.svc-g{margin-bottom:34px}
-.svc-g-label{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--ink3);padding-bottom:12px}
-.svc-opt{display:flex;width:100%;align-items:center;gap:16px;padding:16px;border-radius:14px;text-align:left;transition:background .25s}
-.svc-opt:hover{background:var(--bg2)}
-.svc-opt.sel{background:var(--acc-soft)}
-.opt-name{flex:1;display:flex;align-items:baseline;gap:10px;font-size:17px;font-weight:600;letter-spacing:-.01em}
-.opt-dur{font-size:13px;font-weight:500;color:var(--ink3)}
-.opt-price{font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
-.opt-check{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--hair2);display:grid;place-items:center;color:transparent;flex:none;transition:all .25s}
-.opt-check .lucide{width:13px;height:13px;stroke-width:3}
-.svc-opt.sel .opt-check,.bk-opt.sel .opt-check{background:var(--acc);border-color:var(--acc);color:#fff}
-.svc-panel{position:sticky;top:calc(var(--nav-h) + 32px);background:var(--bg2);border-radius:24px;padding:26px;scroll-margin-top:84px}
-.panel-img{border-radius:16px;overflow:hidden;margin-bottom:20px}
-.panel-img img{width:100%;aspect-ratio:16/10;object-fit:cover;filter:grayscale(1);transition:filter .6s}
-.panel-img:hover img{filter:grayscale(0)}
-.svc-panel h3{font-size:22px;letter-spacing:-.01em;margin-bottom:10px}
-.panel-desc{font-size:14.5px;color:var(--ink2);line-height:1.6;margin-bottom:16px}
-.panel-inc{list-style:none}
-.panel-inc li{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:500;padding:5px 0}
-.panel-inc .lucide{color:var(--acc);stroke-width:2.5}
-.panel-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;border-top:1px solid var(--hair);margin-top:18px;padding-top:20px}
-.panel-meta{display:flex;align-items:center;gap:18px}
-.panel-meta span{display:inline-flex;align-items:center;gap:6px;font-size:14px;color:var(--ink2)}
-.panel-meta .lucide{color:var(--ink3)}
-.panel-meta strong{font-size:22px;font-weight:600;letter-spacing:-.01em}
-
-/* ---------- Barbers page ---------- */
-#barberRows{padding-bottom:60px}
-.barber{display:grid;grid-template-columns:420px 1fr;gap:64px;align-items:center;padding:72px 0;border-top:1px solid var(--hair)}
-.barber:nth-child(even) .b-img{order:2}
-.b-img img{width:100%;aspect-ratio:4/5;object-fit:cover;border-radius:26px;filter:grayscale(1);transition:filter .6s}
-.b-img:hover img{filter:grayscale(0)}
-.b-name{font-size:clamp(30px,3.4vw,42px);font-weight:600;letter-spacing:-.02em;margin-bottom:14px}
-.b-bio{font-size:17px;color:var(--ink2);line-height:1.65;max-width:52ch}
-.b-facts{margin:26px 0 30px;display:flex;gap:48px;flex-wrap:wrap}
-.b-facts dt{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px}
-.b-facts dd{font-size:15px;font-weight:500}
-
-/* ---------- Book page ---------- */
-.book-grid{display:grid;grid-template-columns:1fr 380px;gap:64px;align-items:start;padding-bottom:120px}
-.step{padding:10px 14px 14px;border-radius:18px;margin-bottom:44px;transition:box-shadow .4s}
-.step.flash{box-shadow:0 0 0 2px var(--acc)}
-.step-head{display:flex;align-items:center;gap:14px;margin-bottom:22px}
-.step-no{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--acc);border:1px solid var(--acc);border-radius:999px;padding:3px 10px}
-.step-head h3{font-size:21px;font-weight:600;letter-spacing:-.01em}
-.opt-tag{font-size:13px;color:var(--ink3);font-weight:500}
-.bk-g{margin-bottom:14px}
-.bk-opt{display:flex;align-items:center;gap:14px;width:100%;text-align:left;padding:15px 18px;border:1px solid var(--hair2);border-radius:16px;background:#fff;margin-bottom:10px;transition:border-color .25s,background .25s}
-.bk-opt:hover{border-color:var(--ink3)}
-.bk-opt.sel{border-color:var(--acc);background:var(--acc-soft)}
-.chip-row{display:flex;gap:18px;flex-wrap:wrap}
-.b-chip{display:flex;flex-direction:column;align-items:center;gap:10px}
-.b-chip .cava{width:68px;height:68px;border-radius:50%;padding:3px;border:2px solid transparent;transition:border-color .25s}
-.b-chip img{width:100%;height:100%;border-radius:50%;object-fit:cover;filter:grayscale(1);transition:filter .4s}
-.b-chip:hover img{filter:grayscale(0)}
-.b-chip.sel .cava{border-color:var(--acc)}
-.b-chip>span:last-child{font-size:13px;font-weight:600;color:var(--ink2)}
-.b-chip.sel>span:last-child{color:var(--ink)}
-.cava.first{display:grid;place-items:center;background:var(--bg2);color:var(--ink2);transition:background .25s,color .25s}
-.b-chip.sel .cava.first{background:var(--acc-soft);color:var(--acc)}
-.day-strip{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none;margin-bottom:22px}
-.day-strip::-webkit-scrollbar{display:none}
-.day{flex:none;min-width:70px;padding:12px 8px;border:1px solid var(--hair2);border-radius:16px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;transition:border-color .2s,background .2s}
-.day:hover{border-color:var(--ink3)}
-.day .d-dow{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3)}
-.day .d-num{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
-.day.sel{background:var(--ink);border-color:var(--ink)}
-.day.sel .d-dow{color:rgba(255,255,255,.6)}
-.day.sel .d-num{color:#fff}
-.day.closed{opacity:.32;cursor:not-allowed}
-.slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:10px}
-.slot{height:46px;border-radius:12px;border:1px solid var(--hair2);background:#fff;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums;transition:border-color .2s,background .2s}
-.slot:hover{border-color:var(--ink3)}
-.slot.sel{background:var(--ink);color:#fff;border-color:var(--ink)}
-.slot.off{opacity:.32;cursor:not-allowed;text-decoration:line-through}
-.slot-empty{grid-column:1/-1;color:var(--ink3);font-size:14px;padding:16px 0}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.field.full{grid-column:1/-1}
-.field label{display:block;font-size:13px;font-weight:600;margin-bottom:8px}
-.field input,.field textarea{width:100%;border:1px solid var(--hair2);border-radius:12px;padding:13px 15px;font:inherit;font-size:15px;color:var(--ink);background:#fff;resize:vertical;transition:border-color .2s,box-shadow .2s}
-.field input:focus,.field textarea:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
-.field ::placeholder{color:#b9b9be}
-
-/* ---------- Summary ---------- */
-.summary{position:sticky;top:calc(var(--nav-h) + 32px);background:var(--bg2);border-radius:24px;padding:28px}
-.summary h3{font-size:17px;margin-bottom:4px}
-.summary dl div{display:flex;justify-content:space-between;gap:16px;padding:13px 0;border-bottom:1px solid var(--hair)}
-.summary dt{font-size:13px;color:var(--ink3);font-weight:500}
-.summary dd{font-size:14px;font-weight:600;text-align:right}
-.sum-total{display:flex;justify-content:space-between;align-items:baseline;padding:18px 0 4px}
-.sum-total span{font-size:14px;color:var(--ink2)}
-.sum-total strong{font-size:26px;font-weight:600;letter-spacing:-.02em}
-.sum-note{font-size:12px;color:var(--ink3);margin:6px 0 20px;line-height:1.5}
-.sum-cancel{font-size:12px;color:var(--ink3);text-align:center;margin-top:14px;line-height:1.5}
-
-/* ---------- Toast ---------- */
-.toast{position:fixed;left:50%;bottom:30px;transform:translate(-50%,16px);background:var(--ink);color:#fff;padding:12px 20px 12px 16px;border-radius:999px;font-size:14px;font-weight:500;display:flex;align-items:center;gap:10px;opacity:0;pointer-events:none;transition:opacity .35s,transform .35s var(--ease);z-index:200;box-shadow:0 12px 32px rgba(0,0,0,.28);max-width:calc(100vw - 40px)}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-.toast .lucide{color:#d9b98c}
-
-/* ---------- Confirmation sheet ---------- */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.34);z-index:150;display:grid;place-items:center;padding:24px;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
-.overlay.open{opacity:1;visibility:visible}
-.sheet{background:#fff;border-radius:28px;padding:42px 36px;max-width:460px;width:100%;text-align:center;transform:translateY(22px) scale(.97);transition:transform .45s var(--ease)}
-.overlay.open .sheet{transform:none}
-.ok-badge{width:58px;height:58px;border-radius:50%;background:var(--acc-soft);color:var(--acc);display:grid;place-items:center;margin:0 auto 20px}
-.ok-badge .lucide{stroke-width:2.5}
-.sheet h3{font-size:24px;letter-spacing:-.02em;margin-bottom:10px}
-.sheet-sub{font-size:15px;color:var(--ink2);line-height:1.55;margin-bottom:22px}
-.sheet-recap{text-align:left;border-top:1px solid var(--hair);margin-bottom:26px}
-.sheet-recap div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--hair)}
-.sheet-recap dt{font-size:13px;color:var(--ink3)}
-.sheet-recap dd{font-size:14px;font-weight:600;text-align:right}
-
-/* ---------- Footer ---------- */
-footer{border-top:1px solid var(--hair);padding:64px 0 36px}
-.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:40px}
-.foot-brand .brand{margin-bottom:16px}
-.foot-addr{font-size:13px;color:var(--ink2);line-height:2;font-style:normal}
-.foot-line{display:inline-flex;align-items:center;gap:8px;transition:color .2s}
-.foot-line:hover{color:var(--ink)}
-.foot-line .lucide{color:var(--ink3)}
-.foot-h{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-.foot-grid section a{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2);padding:5px 0;transition:color .2s}
-.foot-grid section a:hover{color:var(--ink)}
-.foot-grid section a .lucide{color:var(--ink3)}
-.foot-hours div{display:flex;justify-content:space-between;font-size:13px;color:var(--ink2);padding:5px 0;max-width:220px}
-.foot-note{font-size:13px;color:var(--ink2);line-height:1.7}
-.foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;border-top:1px solid var(--hair);margin-top:48px;padding-top:24px;font-size:12px;color:var(--ink3)}
-#toTop{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--ink3);transition:color .2s}
-#toTop:hover{color:var(--ink)}
-
-/* ---------- Responsive ---------- */
-@media(max-width:960px){
-  .svc-page-grid,.book-grid{grid-template-columns:1fr}
-  .svc-panel,.summary{position:static;margin-top:20px}
-  .svc-panel{margin-top:48px}
+@media (max-width:960px){
+  .hero-in{grid-template-columns:1fr;gap:40px}
+  .hero-media{max-width:640px;justify-self:start}
+  .book-grid{grid-template-columns:1fr}
+  .summary{position:static;margin-top:12px}
 }
-@media(max-width:920px){
-  .barber{grid-template-columns:1fr;gap:36px;padding:56px 0}
-  .barber:nth-child(even) .b-img{order:0}
+@media (max-width:900px){
+  .barber-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .visit-grid{grid-template-columns:1fr;gap:40px}
+  .hero-media{aspect-ratio:4/3}
 }
-@media(max-width:760px){
-  .nav-links{display:none}
-  .burger{display:block}
-  .stats-grid{grid-template-columns:1fr}
-  .stat{padding:0}
-  .stat + .stat{border-left:none;border-top:1px solid var(--hair);margin-top:26px;padding-top:26px}
-  .zoomReveal{aspect-ratio:4/3}
-  .hero-img img{aspect-ratio:4/3}
-  .sec-head{flex-direction:column;align-items:flex-start;gap:14px}
-  .svc-row{grid-template-columns:1fr auto 22px;gap:18px}
-  .svc-meta{display:none}
-  .b-facts{gap:28px}
+@media (max-width:820px){
+  .service-groups{grid-template-columns:1fr;gap:24px}
 }
-@media(max-width:640px){.fields{grid-template-columns:1fr}}
-@media(max-width:560px){
+@media (max-width:760px){
+  .section-sub{font-size:16px}
+  .quote{padding:72px 20px}
+  .quote blockquote{max-width:100%}
+}
+@media (max-width:640px){
+  .price-grid{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .nav-phone span{display:none}
+  .nav-phone{padding:0 10px}
+  .brand{font-size:13px;letter-spacing:.16em}
+  .book-head p{font-size:15px}
+  .hero h1{line-height:.97}
+}
+@media (max-width:620px){
+  .day-strip{display:flex;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity;scrollbar-width:none}
+  .day-strip::-webkit-scrollbar{display:none}
+  .day-opt{flex:0 0 64px;scroll-snap-align:start}
+  .slot-grid{grid-template-columns:repeat(auto-fill,minmax(78px,1fr))}
+}
+@media (max-width:560px){
   .nav-book .long{display:none}
   .nav-book .short{display:inline}
-  .hero-cta{flex-direction:column;gap:18px}
+  .hero-actions{align-items:stretch}
+  .hero-actions .btn{width:100%}
+  .hero-media{border-radius:20px}
+  .foot{flex-direction:column;align-items:flex-start;gap:12px}
 }
-@media(prefers-reduced-motion:reduce){
+@media (max-width:420px){
+  .barber-grid{gap:14px}
+  .barber-name{font-size:15px}
+  .barber-spec{font-size:12px}
+  .barber-book{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
-  .page.on{animation:none}
-  *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+@media (prefers-reduced-motion:no-preference){
+  .hero-copy > :nth-child(1){animation:rise .8s var(--ease) both .04s}
+  .hero-copy > :nth-child(2){animation:rise .8s var(--ease) both .13s}
+  .hero-copy > :nth-child(3){animation:rise .8s var(--ease) both .22s}
+  .hero-media{animation:imageIn 1s var(--ease) both .12s}
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @keyframes imageIn{from{opacity:0;transform:translateY(24px) scale(.985)}to{opacity:1;transform:none}}
+}
+@media (forced-colors:active){
+  .svc-in,.day-in,.slot-in,.bc-avatar{border:1px solid CanvasText}
+  .svc-opt input:checked + .svc-in,.day-opt input:checked + .day-in,.slot-opt input:checked + .slot-in,.bc-opt input:checked + .bc-in .bc-avatar{outline:2px solid Highlight;outline-offset:2px}
 }
 </style>
 </head>
 <body data-route="home">
 
-<!-- ============ NAV ============ -->
-<header class="nav" id="nav">
+<a class="skip-link" href="#main">Skip to content</a>
+
+<svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;overflow:hidden">
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6" cy="6" r="3"/><path d="M8.12 8.12 12 12"/><path d="M20 4 8.12 15.88"/><circle cx="6" cy="18" r="3"/><path d="M14.8 14.8 20 20"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-arrow-up-right" viewBox="0 0 24 24"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></symbol>
+  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+</svg>
+
+<header class="nav">
   <div class="nav-in">
-    <a class="brand" href="#/" aria-label="Alder home"><i data-lucide="scissors" class="ic ic-18"></i><span>ALDER</span></a>
-    <nav class="nav-links" aria-label="Primary">
-      <a href="#/services" data-nav="services">Services</a>
-      <a href="#/barbers" data-nav="barbers">Barbers</a>
+    <a class="brand" href="#/" aria-label="Alder — home">
+      <svg class="ic ic-18" aria-hidden="true"><use href="#i-scissors"/></svg>
+      <span>ALDER</span>
+    </a>
+    <nav class="nav-right" aria-label="Primary">
+      <a class="nav-phone" href="tel:+12125550184" aria-label="Call Alder at (212) 555-0184">
+        <svg class="ic ic-16" aria-hidden="true"><use href="#i-phone"/></svg>
+        <span>(212) 555-0184</span>
+      </a>
+      <a class="btn btn-sm nav-book" href="#/book"><span class="long">Book a chair</span><span class="short">Book</span></a>
     </nav>
-    <div class="nav-right">
-      <a href="#/book" class="pill pill-sm nav-book"><span class="long">Book a chair</span><span class="short">Book</span></a>
-      <button class="burger" id="burger" aria-label="Toggle menu" aria-expanded="false">
-        <i data-lucide="menu" class="ic ic-20 menu-ic"></i><i data-lucide="x" class="ic ic-20 close-ic"></i>
-      </button>
-    </div>
   </div>
 </header>
 
-<!-- Mobile menu -->
-<div class="mmenu" id="mmenu">
-  <a class="big" href="#/services">Services</a>
-  <a class="big" href="#/barbers">Barbers</a>
-  <a class="big" href="#/book">Book a chair</a>
-  <div class="mmenu-meta">
-    <strong>ALDER</strong> · 228 Mercer Street, SoHo<br>
-    Tue–Fri 10–20 · Sat 9–18 · Sun &amp; Mon closed<br>
-    <a href="tel:+12125550184">(212) 555-0184</a>
-  </div>
+<main id="main" tabindex="-1">
+
+<noscript>
+  <p class="noscript">The price list and booking flow need JavaScript. Call <a href="tel:+12125550184">(212) 555-0184</a> and we’ll find you a chair.</p>
+</noscript>
+
+<div class="page" id="page-home">
+
+  <section class="hero" aria-labelledby="homeTitle">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <h1 id="homeTitle" tabindex="-1">A better <em>hour</em><br>in the chair.</h1>
+        <p class="hero-sub">Master barbers, honest prices, and appointments that start on time. Book the chair you want in about a minute.</p>
+        <div class="hero-actions">
+          <a class="btn btn-lg" href="#/book">Book a chair <svg class="ic ic-16" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          <p class="hero-next" id="heroNext" hidden>
+            <svg class="ic ic-14" aria-hidden="true"><use href="#i-clock"/></svg>
+            <span id="heroNextText"></span>
+          </p>
+        </div>
+      </div>
+      <div class="hero-media">
+        <img src="https://picsum.photos/seed/alder-hero/1200/1500.jpg" alt="Inside the Alder barbershop on Mercer Street" width="1200" height="1500" fetchpriority="high">
+      </div>
+    </div>
+  </section>
+
+  <section class="section prices" id="prices" aria-labelledby="pricesTitle">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="pricesTitle">The price is the price.</h2>
+        <p class="section-sub">Every service is priced up front, so there are no tiers or surprise upcharges. Pay in the shop by card or cash.</p>
+      </div>
+      <div class="price-grid" id="priceList"></div>
+      <p class="price-help">Not sure what to book? <a href="#/book?service=signature">Start with the Signature Cut</a>, which begins with a consultation.</p>
+    </div>
+  </section>
+
+  <section class="section barbers" aria-labelledby="barbersTitle">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="barbersTitle">Choose your barber.</h2>
+        <p class="section-sub">Pick one and that's who cuts your hair, every visit. You're never passed around the shop.</p>
+      </div>
+      <div class="barber-grid" id="barberGrid"></div>
+    </div>
+  </section>
+
+  <section class="quote" aria-labelledby="quoteTitle">
+    <div class="wrap">
+      <h2 class="sr-only" id="quoteTitle">What clients say</h2>
+      <div class="rating">
+        <span class="rating-stars" aria-hidden="true">
+          <svg class="ic ic-12 star"><use href="#i-star"/></svg>
+          <svg class="ic ic-12 star"><use href="#i-star"/></svg>
+          <svg class="ic ic-12 star"><use href="#i-star"/></svg>
+          <svg class="ic ic-12 star"><use href="#i-star"/></svg>
+          <svg class="ic ic-12 star"><use href="#i-star"/></svg>
+        </span>
+        <span>4.9 · 2,300+ reviews</span>
+      </div>
+      <blockquote>
+        <p>“I stopped describing haircuts years ago. I just say ‘the usual’ and sit down.”</p>
+        <footer>Michael R. · a regular since 2016</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="section visit" aria-labelledby="visitTitle">
+    <div class="wrap visit-grid">
+      <div class="visit-copy">
+        <h2 id="visitTitle">Ready when you are.</h2>
+        <p class="section-sub">Pick a service, a barber, and a time. It takes about a minute, the good kind.</p>
+        <a class="btn btn-lg" href="#/book">Book a chair <svg class="ic ic-16" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <p class="fineprint">Booking takes about a minute, needs no account or deposit, and you can cancel free up to 4 hours before.</p>
+      </div>
+      <dl class="visit-facts">
+        <div>
+          <dt>Find us</dt>
+          <dd>228 Mercer Street, SoHo<br>New York, NY 10012<br><a href="https://maps.google.com/?q=228+Mercer+Street+New+York" target="_blank" rel="noopener">Directions <svg class="ic ic-12" aria-hidden="true"><use href="#i-arrow-up-right"/></svg></a></dd>
+        </div>
+        <div>
+          <dt>Hours</dt>
+          <dd>
+            <span class="hours">
+              <span>Tue – Fri</span><span>10:00 – 20:00</span>
+              <span>Saturday</span><span>9:00 – 18:00</span>
+              <span>Sun – Mon</span><span>Closed</span>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt>Call</dt>
+          <dd><a href="tel:+12125550184">(212) 555-0184</a><br><a href="mailto:chair@alder.shop">chair@alder.shop</a></dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+
 </div>
 
-<main id="app">
-
-<!-- ============ HOME ============ -->
-<section class="page" id="page-home">
-  <div class="hero">
-    <div class="wrap">
-      <p class="eyebrow rv">SoHo · New York</p>
-      <h1 class="rv" data-d="1">A better hour<br>in the chair.</h1>
-      <p class="hero-sub rv" data-d="2">Master barbers, honest prices, and appointments that run on the minute. No waiting room, no upsell, no small talk required.</p>
-      <div class="hero-cta rv" data-d="3">
-        <a class="pill" href="#/book">Book a chair</a>
-        <a class="link-arrow" href="#/services">Explore services <i data-lucide="arrow-right" class="ic ic-16"></i></a>
-      </div>
-    </div>
-    <div class="wrap">
-      <figure class="hero-img rv" data-d="4">
-        <img src="https://picsum.photos/seed/alder-hero/1800/780.jpg" alt="Inside the Alder barbershop">
-        <figcaption class="chip-loc"><i data-lucide="map-pin" class="ic ic-14"></i>228 Mercer Street · SoHo</figcaption>
-      </figure>
-    </div>
+<div class="page" id="page-book" aria-labelledby="bookTitle">
+  <div class="wrap book-head">
+    <h1 id="bookTitle" tabindex="-1">Book a chair.</h1>
+    <p>Pick a service, a barber, and a time. No account, no deposit, and free cancellation up to four hours before.</p>
   </div>
 
-  <section class="stats">
-    <div class="wrap stats-grid">
-      <div class="stat rv"><div class="stat-n" data-count="14">0</div><div class="stat-l">years behind the chair</div></div>
-      <div class="stat rv" data-d="1"><div class="stat-n" data-count="38000" data-fmt="comma" data-suffix="+">0</div><div class="stat-l">cuts delivered</div></div>
-      <div class="stat rv" data-d="2"><div class="stat-n" data-count="4.9" data-dec="1">0</div><div class="stat-l">average rating · 2,300+ reviews</div></div>
-    </div>
-  </section>
-
-  <section class="craft">
-    <div class="wrap">
-      <p class="eyebrow rv">The craft</p>
-      <h2 class="sec-title rv" data-d="1">Obsessed with<br>the millimetre.</h2>
-      <p class="lead rv" data-d="2">Every cut at Alder ends the same way: a second mirror, a second pass, and the few millimetres nobody notices — until they notice how good it still looks two weeks later.</p>
-      <div class="zoomReveal rv" data-d="2" id="zoomReveal" aria-label="Drag to inspect the detail">
-        <img class="zr-base" src="https://picsum.photos/seed/alder-craft/1500/760.jpg" alt="The finished cut" draggable="false">
-        <div class="zr-top"><img class="zr-zoom" src="https://picsum.photos/seed/alder-craft/1500/760.jpg" alt="" draggable="false"></div>
-        <div class="zr-line"><button class="zr-grip" id="zrGrip" aria-label="Drag left or right to reveal detail"><i data-lucide="chevrons-left-right" class="ic ic-18"></i></button></div>
-        <span class="zr-tag zr-tag-l">The finish</span>
-        <span class="zr-tag zr-tag-r">Up close</span>
-        <span class="zr-hint"><i data-lucide="chevrons-left-right" class="ic ic-14"></i>Drag to look closer</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="svcTeaser">
-    <div class="wrap">
-      <p class="eyebrow rv">Services</p>
-      <div class="sec-head rv" data-d="1">
-        <h2 class="sec-title">Straightforward cuts,<br>straightforward prices.</h2>
-        <a class="link-arrow" href="#/services">See all services <i data-lucide="arrow-right" class="ic ic-16"></i></a>
-      </div>
-      <div class="svc-list rv" data-d="2" id="svcTeaserList"></div>
-    </div>
-  </section>
-
-  <section class="chairTeaser">
-    <div class="wrap">
-      <p class="eyebrow rv">The chairs</p>
-      <div class="sec-head rv" data-d="1">
-        <h2 class="sec-title">Book the barber,<br>not just a slot.</h2>
-        <a class="link-arrow" href="#/barbers">Meet all four <i data-lucide="arrow-right" class="ic ic-16"></i></a>
-      </div>
-    </div>
-    <div class="chairs-strip rv" data-d="2" id="chairsStrip"></div>
-  </section>
-
-  <section class="quotes" id="quotes">
-    <div class="wrap q-inner">
-      <div class="stars rv">
-        <i data-lucide="star" class="ic-14"></i><i data-lucide="star" class="ic-14"></i><i data-lucide="star" class="ic-14"></i><i data-lucide="star" class="ic-14"></i><i data-lucide="star" class="ic-14"></i>
-      </div>
-      <div class="q-stack rv" data-d="1">
-        <blockquote class="q on">
-          <p>“I stopped describing haircuts years ago. I just say ‘the usual’ and sit down.”</p>
-          <footer>Michael R. · a regular since 2016</footer>
-        </blockquote>
-        <blockquote class="q">
-          <p>“In and out in forty minutes, and somehow it’s the best cut I’ve had in this city.”</p>
-          <footer>Dev T. · SoHo local</footer>
-        </blockquote>
-        <blockquote class="q">
-          <p>“The hot-towel shave is the closest thing to time travel we currently have.”</p>
-          <footer>André L. · first-timer turned regular</footer>
-        </blockquote>
-      </div>
-      <div class="q-dots rv" data-d="2">
-        <button class="on" data-q="0" aria-label="Quote 1"></button>
-        <button data-q="1" aria-label="Quote 2"></button>
-        <button data-q="2" aria-label="Quote 3"></button>
-      </div>
-    </div>
-  </section>
-
-  <section class="cta">
-    <div class="wrap">
-      <h2 class="rv">Ready when you are.</h2>
-      <p class="rv" data-d="1">Pick a service, a barber and a time. It takes about a minute — the good kind of minute.</p>
-      <div class="rv" data-d="2"><a class="pill" href="#/book">Book a chair</a></div>
-      <p class="cta-meta rv" data-d="3">
-        <span><i data-lucide="clock" class="ic ic-14"></i>Open Tue – Sat</span>
-        <span><i data-lucide="map-pin" class="ic ic-14"></i>228 Mercer St, SoHo</span>
-        <span><i data-lucide="phone" class="ic ic-14"></i>(212) 555-0184</span>
-      </p>
-    </div>
-  </section>
-</section>
-
-<!-- ============ SERVICES ============ -->
-<section class="page" id="page-services">
-  <div class="page-head">
-    <div class="wrap">
-      <p class="eyebrow rv">Price list</p>
-      <h1 class="rv" data-d="1">Services</h1>
-      <p class="page-sub rv" data-d="2">Every price is the full price. No member tiers, no surprise upcharges, and no tipping-screen gymnastics.</p>
-    </div>
-  </div>
-  <div class="wrap svc-page-grid">
-    <div class="svc-groups" id="svcGroups"></div>
-    <aside class="svc-panel rv" id="svcPanel" aria-live="polite"></aside>
-  </div>
-</section>
-
-<!-- ============ BARBERS ============ -->
-<section class="page" id="page-barbers">
-  <div class="page-head">
-    <div class="wrap">
-      <p class="eyebrow rv">The chairs</p>
-      <h1 class="rv" data-d="1">Four barbers.<br>One standard.</h1>
-      <p class="page-sub rv" data-d="2">No juniors, no rotation roulette. Pick a barber and you get that barber — every single visit.</p>
-    </div>
-  </div>
-  <div class="wrap" id="barberRows"></div>
-</section>
-
-<!-- ============ BOOK ============ -->
-<section class="page" id="page-book">
-  <div class="page-head">
-    <div class="wrap">
-      <p class="eyebrow rv">Book a chair</p>
-      <h1 class="rv" data-d="1">Three choices.<br>One chair.</h1>
-      <p class="page-sub rv" data-d="2">Pick a service, a barber and a time. No account, no app, no deposit.</p>
-    </div>
-  </div>
   <div class="wrap book-grid">
-    <div class="book-steps">
-      <div class="step" id="stepService">
-        <div class="step-head"><span class="step-no">01</span><h3>Service</h3></div>
-        <div id="bookServices" role="radiogroup" aria-label="Choose a service"></div>
-      </div>
-      <div class="step" id="stepBarber">
-        <div class="step-head"><span class="step-no">02</span><h3>Barber</h3></div>
-        <div class="chip-row" id="bookBarbers" role="radiogroup" aria-label="Choose a barber"></div>
-      </div>
-      <div class="step" id="stepWhen">
-        <div class="step-head"><span class="step-no">03</span><h3>Day &amp; time</h3></div>
-        <div class="day-strip" id="dayStrip" aria-label="Choose a day"></div>
-        <div class="slot-grid" id="slotGrid" aria-label="Choose a time"></div>
-      </div>
-      <div class="step" id="stepDetails">
-        <div class="step-head"><span class="step-no">04</span><h3>Details <span class="opt-tag">Optional</span></h3></div>
+    <div class="steps">
+
+      <section class="step" aria-labelledby="stepServiceTitle">
+        <div class="step-head"><h2 id="stepServiceTitle">Service</h2></div>
+        <div class="service-groups" id="bookServices" role="radiogroup" aria-labelledby="stepServiceTitle"></div>
+        <p class="step-note" id="serviceNote" hidden></p>
+      </section>
+
+      <section class="step" aria-labelledby="stepBarberTitle">
+        <div class="step-head"><h2 id="stepBarberTitle">Barber</h2></div>
+        <div class="barber-choices" id="bookBarbers" role="radiogroup" aria-labelledby="stepBarberTitle"></div>
+        <p class="step-note" id="barberNote"></p>
+      </section>
+
+      <section class="step" aria-labelledby="stepWhenTitle">
+        <div class="step-head"><h2 id="stepWhenTitle">Day &amp; time</h2></div>
+        <div class="day-strip" id="dayStrip" role="radiogroup" aria-label="Choose a day"></div>
+        <div class="slot-grid" id="slotGrid" role="radiogroup" aria-label="Choose a time"></div>
+      </section>
+
+      <section class="step" id="stepDetails" aria-labelledby="stepDetailsTitle" hidden>
+        <div class="step-head"><h2 id="stepDetailsTitle">Details <span class="opt-tag">Optional</span></h2></div>
         <div class="fields">
           <div class="field">
             <label for="fName">Name</label>
-            <input id="fName" type="text" placeholder="So we know who’s in the chair" autocomplete="name">
+            <input id="fName" type="text" placeholder="Who’s in the chair?" autocomplete="name">
           </div>
           <div class="field">
-            <label for="fPhone">Phone</label>
-            <input id="fPhone" type="tel" placeholder="For a reminder text" autocomplete="tel">
-          </div>
-          <div class="field full">
-            <label for="fNotes">Notes</label>
-            <textarea id="fNotes" rows="3" placeholder="References, allergies, the usual…"></textarea>
+            <label for="fPhone">Mobile</label>
+            <input id="fPhone" type="tel" inputmode="tel" placeholder="For a reminder text" autocomplete="tel">
           </div>
         </div>
-      </div>
+      </section>
+
     </div>
-    <aside class="summary" id="summary">
-      <h3>Your visit</h3>
+
+    <aside class="summary" id="summary" aria-labelledby="summaryTitle">
+      <h2 id="summaryTitle">Your visit</h2>
       <dl>
         <div><dt>Service</dt><dd id="sumService">—</dd></div>
         <div><dt>Barber</dt><dd id="sumBarber">First available</dd></div>
         <div><dt>When</dt><dd id="sumWhen">—</dd></div>
         <div><dt>Duration</dt><dd id="sumDur">—</dd></div>
       </dl>
-      <div class="sum-total"><span>Total</span><strong id="sumTotal">$0</strong></div>
-      <p class="sum-note">Pay in the shop — card, cash, or the exact change you found in the couch.</p>
-      <button class="pill pill-block" id="confirmBtn" type="button">Confirm booking</button>
-      <p class="sum-cancel">Free cancellation up to 4 hours before — just call the shop.</p>
+      <div class="sum-total"><span>Total</span><strong id="sumTotal">—</strong></div>
+      <p class="pay-note">Pay in the shop by card or cash.</p>
+      <button class="btn btn-block" id="confirmBtn" type="button" disabled>Choose a service and a time</button>
+      <p class="cancel-note">Free cancellation up to 4 hours before. <a href="tel:+12125550184">Call the shop</a> to change.</p>
     </aside>
   </div>
-</section>
+</div>
+
+<div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
 
 </main>
 
-<!-- ============ FOOTER ============ -->
 <footer>
-  <div class="wrap">
-    <div class="foot-grid">
-      <div class="foot-brand">
-        <a class="brand" href="#/"><i data-lucide="scissors" class="ic ic-18"></i><span>ALDER</span></a>
-        <p class="foot-addr">
-          228 Mercer Street<br>SoHo, New York, NY 10012<br>
-          <a class="foot-line" href="mailto:chair@alder.shop"><i data-lucide="mail" class="ic ic-14"></i>chair@alder.shop</a><br>
-          <a class="foot-line" href="tel:+12125550184"><i data-lucide="phone" class="ic ic-14"></i>(212) 555-0184</a>
-        </p>
-      </div>
-      <section>
-        <div class="foot-h">Visit</div>
-        <a href="#/services">Services</a>
-        <a href="#/barbers">Barbers</a>
-        <a href="#/book">Book a chair</a>
-        <a href="https://maps.google.com/?q=228+Mercer+Street+New+York" target="_blank" rel="noopener"><i data-lucide="map-pin" class="ic ic-14"></i>Get directions</a>
-      </section>
-      <section>
-        <div class="foot-h">Hours</div>
-        <div class="foot-hours">
-          <div><span>Tue – Fri</span><span>10:00 – 20:00</span></div>
-          <div><span>Saturday</span><span>9:00 – 18:00</span></div>
-          <div><span>Sun – Mon</span><span>Closed</span></div>
-        </div>
-      </section>
-      <section>
-        <div class="foot-h">The fine print</div>
-        <p class="foot-note">Walk-ins welcome when the board says so. Cancellations are free up to four hours before your slot — after that, buy your barber a coffee.</p>
-      </section>
-    </div>
-    <div class="foot-bottom">
-      <span>© 2025 Alder Grooming Co. — a design prototype. No real bookings are made.</span>
-      <button id="toTop" type="button">Back to top <i data-lucide="arrow-up" class="ic ic-14"></i></button>
-    </div>
+  <div class="wrap foot">
+    <a class="brand" href="#/" aria-label="Alder — home">
+      <svg class="ic ic-16" aria-hidden="true"><use href="#i-scissors"/></svg>
+      <span>ALDER</span>
+    </a>
+    <p>© 2026 Alder Grooming Co. A design prototype; no real bookings are made.</p>
+    <button class="foot-top" id="toTop" type="button">Back to top <svg class="ic ic-12" aria-hidden="true"><use href="#i-arrow-up"/></svg></button>
   </div>
 </footer>
 
-<!-- Floating hover preview (services list) -->
-<div class="floaty" id="floaty" aria-hidden="true"><img id="floatyImg" alt=""></div>
+<dialog class="sheet" id="sheet" aria-labelledby="sheetTitle"></dialog>
 
-<!-- Toast -->
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-
-<!-- Confirmation sheet -->
-<div class="overlay" id="sheetOverlay">
-  <div class="sheet" role="dialog" aria-modal="true" aria-label="Booking summary" id="sheetBody"></div>
-</div>
-
-<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script>
-/* ================= Helpers & data ================= */
-const $  = (s, c = document) => c.querySelector(s);
-const $$ = (s, c = document) => [...c.querySelectorAll(s)];
-const icons = () => window.lucide ? window.lucide.createIcons() : null;
-const pic = (seed, w, h) => `https://picsum.photos/seed/${seed}/${w}/${h}.jpg`;
-const esc = s => s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+(() => {
+  'use strict';
+  const $ = (s, c = document) => c.querySelector(s);
+  const $$ = (s, c = document) => [...c.querySelectorAll(s)];
+  const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
+  const pic = (seed, w, h) => `https://picsum.photos/seed/${seed}/${w}/${h}.jpg`;
+  const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-const SERVICES = [
-  { id:'signature', cat:'Cuts', name:'Signature Cut', dur:45, price:65, seed:'alder-signature',
-    desc:'The full Alder treatment — a proper consultation, a precise cut, and a hot-towel finish before we style it exactly the way you’ll wear it for the next five weeks.',
-    inc:['Consultation & wash','Precision cut','Hot-towel finish','Styled to go'] },
-  { id:'skinfade', cat:'Cuts', name:'Skin Fade', dur:40, price:58, seed:'alder-fade',
-    desc:'Zero to blended — taken down with the foil, finished with the razor, and checked from every angle twice. Sharp at noon, still sharp at midnight.',
-    inc:['Foil & scissor work','Razor line-up','Style & product'] },
-  { id:'scissor', cat:'Cuts', name:'Classic Scissor Cut', dur:50, price:70, seed:'alder-scissor',
-    desc:'For the clipper-averse. Grown-out shapes, texture and movement, cut entirely with shears the way it was done before electricity got involved.',
-    inc:['Wash & condition','Full scissor cut','Blow-dry finish'] },
-  { id:'buzz', cat:'Cuts', name:'Buzz & Shape', dur:20, price:35, seed:'alder-buzz',
-    desc:'One length all over, edged up clean, and you’re out the door in twenty minutes flat.',
-    inc:['Clipper cut','Edge-up','Neck shave'] },
-  { id:'kids', cat:'Cuts', name:'Kid’s Cut', dur:30, price:40, seed:'alder-kids',
-    desc:'Under-12s get the same chair and the same care as the grown-ups — plus a lollipop we pretend not to keep by the register.',
-    inc:['Patient barber','Cut & style','One lollipop'] },
-  { id:'shave', cat:'Shave & Beard', name:'Hot Towel Shave', dur:30, price:50, seed:'alder-shave',
-    desc:'Three towels, two passes, one straight razor. Thirty minutes that feel like a small holiday.',
-    inc:['Three hot towels','Straight-razor shave','Cold towel & balm'] },
-  { id:'beard', cat:'Shave & Beard', name:'Beard Sculpt', dur:25, price:38, seed:'alder-beard',
-    desc:'Shaped, lined and balanced to your face — finished with oil and a two-minute lesson in keeping it that way.',
-    inc:['Shape & line','Razor edges','Oil finish'] },
-  { id:'cutbeard', cat:'Shave & Beard', name:'Cut + Beard', dur:70, price:92, seed:'alder-cutbeard',
-    desc:'The whole works. Sit down scruffy, stand up a new man.',
-    inc:['Full signature cut','Beard sculpt','Hot-towel finish'] },
-  { id:'grey', cat:'Treatments', name:'Grey Blend', dur:30, price:30, seed:'alder-grey',
-    desc:'Subtle camouflage, not a dye job. Takes the edge off without anyone knowing exactly why you look rested.',
-    inc:['Colour match','Low-maintenance blend','Five-minute rinse'] },
-  { id:'scalp', cat:'Treatments', name:'Scalp Therapy', dur:30, price:42, seed:'alder-scalp',
-    desc:'A deep-cleansing, massage-inclusive reset for the head under the hair. You’ll leave wondering why you don’t do this monthly.',
-    inc:['Deep cleanse','Ten-minute massage','Tonic finish'] },
-];
+  const SERVICES = [
+    { id:'signature', cat:'Cuts', name:'Signature Cut', dur:45, price:65, inc:['Consultation & wash','Precision cut','Hot-towel finish','Styled to go'] },
+    { id:'skinfade', cat:'Cuts', name:'Skin Fade', dur:40, price:58, inc:['Foil & scissor work','Razor line-up','Style & product'] },
+    { id:'scissor', cat:'Cuts', name:'Classic Scissor Cut', dur:50, price:70, inc:['Wash & condition','Full scissor cut','Blow-dry finish'] },
+    { id:'buzz', cat:'Cuts', name:'Buzz & Shape', dur:20, price:35, inc:['Clipper cut','Edge-up','Neck shave'] },
+    { id:'kids', cat:'Cuts', name:'Kid’s Cut', dur:30, price:40, inc:['Patient barber','Cut & style','One lollipop'] },
+    { id:'shave', cat:'Shave & Beard', name:'Hot Towel Shave', dur:30, price:50, inc:['Three hot towels','Straight-razor shave','Cold towel & balm'] },
+    { id:'beard', cat:'Shave & Beard', name:'Beard Sculpt', dur:25, price:38, inc:['Shape & line','Razor edges','Oil finish'] },
+    { id:'cutbeard', cat:'Shave & Beard', name:'Cut + Beard', dur:70, price:92, inc:['Full signature cut','Beard sculpt','Hot-towel finish'] },
+    { id:'grey', cat:'Treatments', name:'Grey Blend', dur:30, price:30, inc:['Colour match','Low-maintenance blend','Five-minute rinse'] },
+    { id:'scalp', cat:'Treatments', name:'Scalp Therapy', dur:30, price:42, inc:['Deep cleanse','Ten-minute massage','Tonic finish'] }
+  ];
+  const SERVICE_MAP = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
 
-const BARBERS = [
-  { id:'marcus', name:'Marcus Bell', role:'Master Barber · Founder', seed:'alder-marcus',
-    spec:'Skin fades · Classic cuts · Beard work', days:'Tuesday – Saturday',
-    bio:'Marcus spent a decade cutting his way through Milan before opening Alder on Mercer Street in 2014. He believes a fade is architecture — structure first, ornament later — and he will absolutely tell you if that fringe won’t work.' },
-  { id:'dario', name:'Dario Ferretti', role:'Senior Barber', seed:'alder-dario',
-    spec:'Scissor work · Texture · Long styles', days:'Wednesday – Sunday',
-    bio:'Dario learned in his uncle’s two-chair shop in Bologna, where the waiting was long and the talking was longer. A scissor purist, he defends the pompadour in any argument and has never once rushed a head of hair.' },
-  { id:'june', name:'June Park', role:'Barber', seed:'alder-june',
-    spec:'Skin fades · Crops · Kid’s cuts', days:'Tuesday – Saturday',
-    bio:'June has the fastest hands in the shop and the strictest eye for a line. She cuts a crop so clean it looks retouched, and she’s the reason half the neighbourhood’s kids ask for “the same as last time.”' },
-  { id:'elias', name:'Elias Ward', role:'Barber · Shave Specialist', seed:'alder-elias',
-    spec:'Straight razor · Beard · Grey blend', days:'Thursday – Sunday',
-    bio:'Elias is the keeper of the hot towels and the straight razor. Ninety percent of his shave clients fall asleep in the chair — he takes it as the highest of compliments.' },
-];
+  const BARBERS = [
+    { id:'marcus', name:'Marcus Bell', seed:'alder-marcus', spec:'Skin fades · Classic cuts · Beard work', days:'Tue – Sat', work:[2,3,4,5,6] },
+    { id:'dario', name:'Dario Ferretti', seed:'alder-dario', spec:'Scissor work · Texture · Long styles', days:'Wed – Sat', work:[3,4,5,6] },
+    { id:'june', name:'June Park', seed:'alder-june', spec:'Skin fades · Crops · Kid’s cuts', days:'Tue – Sat', work:[2,3,4,5,6] },
+    { id:'elias', name:'Elias Ward', seed:'alder-elias', spec:'Straight razor · Beard · Grey blend', days:'Thu – Sat', work:[4,5,6] }
+  ];
+  const BARBER_MAP = Object.fromEntries(BARBERS.map((b) => [b.id, b]));
 
-const state = { service:null, barber:null, dayIdx:null, time:null, name:'', phone:'', notes:'' };
-const DAYS = [];
-
-/* ================= Home: teaser list + chairs ================= */
-function renderTeaser(){
-  const ids = ['signature','skinfade','shave','beard','buzz'];
-  $('#svcTeaserList').innerHTML = ids.map(id => {
-    const s = SERVICES.find(x => x.id === id);
-    return `<a class="svc-row" href="#/services" data-seed="${s.seed}">
-      <span class="svc-name">${s.name}</span>
-      <span class="svc-meta">${s.dur} min</span>
-      <span class="svc-price">$${s.price}</span>
-      <span class="svc-go"><i data-lucide="arrow-up-right" class="ic ic-18"></i></span>
-    </a>`;
-  }).join('');
-}
-function renderChairs(){
-  $('#chairsStrip').innerHTML = BARBERS.map(b => `
-    <a class="chair-card" href="#/barbers">
-      <img src="${pic(b.seed,480,620)}" alt="${b.name}" loading="lazy">
-      <strong>${b.name}</strong><span>${b.role.split(' · ')[0]}</span>
-    </a>`).join('');
-}
-
-/* ================= Services page: list + detail panel ================= */
-function renderServicesPage(){
-  const cats = [...new Set(SERVICES.map(s => s.cat))];
-  $('#svcGroups').innerHTML = cats.map(c => `
-    <div class="svc-g"><div class="svc-g-label">${c}</div>
-    ${SERVICES.filter(s => s.cat === c).map(s => `
-      <button type="button" class="svc-opt" data-id="${s.id}" role="radio" aria-checked="false">
-        <span class="opt-name">${s.name}<span class="opt-dur">${s.dur} min</span></span>
-        <span class="opt-price">$${s.price}</span>
-        <span class="opt-check"><i data-lucide="check" class="ic ic-14"></i></span>
-      </button>`).join('')}
-    </div>`).join('');
-  $$('.svc-opt').forEach(b => b.addEventListener('click', () => selectSvcDetail(b.dataset.id, true)));
-  selectSvcDetail('signature', false);
-}
-function selectSvcDetail(id, scroll){
-  const s = SERVICES.find(x => x.id === id);
-  $$('.svc-opt').forEach(b => {
-    const on = b.dataset.id === id;
-    b.classList.toggle('sel', on);
-    b.setAttribute('aria-checked', on);
-  });
-  $('#svcPanel').innerHTML = `
-    <div class="panel-img"><img src="${pic(s.seed,760,475)}" alt="${s.name}"></div>
-    <h3>${s.name}</h3>
-    <p class="panel-desc">${s.desc}</p>
-    <ul class="panel-inc">${s.inc.map(i => `<li><i data-lucide="check" class="ic ic-14"></i>${i}</li>`).join('')}</ul>
-    <div class="panel-foot">
-      <div class="panel-meta">
-        <span><i data-lucide="clock" class="ic ic-14"></i>${s.dur} min</span>
-        <strong>$${s.price}</strong>
-      </div>
-      <a class="pill" href="#/book?service=${s.id}">Book this</a>
-    </div>`;
-  icons();
-  if (scroll && matchMedia('(max-width:960px)').matches)
-    $('#svcPanel').scrollIntoView({ behavior:'smooth', block:'start' });
-}
-
-/* ================= Barbers page ================= */
-function renderBarbersPage(){
-  $('#barberRows').innerHTML = BARBERS.map(b => `
-    <article class="barber rv">
-      <figure class="b-img"><img src="${pic(b.seed,640,800)}" alt="Portrait of ${b.name}" loading="lazy"></figure>
-      <div class="b-info">
-        <p class="eyebrow">${b.role}</p>
-        <h2 class="b-name">${b.name}</h2>
-        <p class="b-bio">${b.bio}</p>
-        <dl class="b-facts">
-          <div><dt>Specializes in</dt><dd>${b.spec}</dd></div>
-          <div><dt>In the shop</dt><dd>${b.days}</dd></div>
-        </dl>
-        <a class="link-arrow" href="#/book?barber=${b.id}">Book with ${b.name.split(' ')[0]} <i data-lucide="arrow-right" class="ic ic-16"></i></a>
-      </div>
-    </article>`).join('');
-}
-
-/* ================= Book page ================= */
-function renderBookServices(){
-  const cats = [...new Set(SERVICES.map(s => s.cat))];
-  $('#bookServices').innerHTML = cats.map(c => `
-    <div class="bk-g"><div class="svc-g-label">${c}</div>
-    ${SERVICES.filter(s => s.cat === c).map(s => `
-      <button type="button" class="bk-opt" data-id="${s.id}" role="radio" aria-checked="false">
-        <span class="opt-check"><i data-lucide="check" class="ic ic-14"></i></span>
-        <span class="opt-name">${s.name}<span class="opt-dur">${s.dur} min</span></span>
-        <span class="opt-price">$${s.price}</span>
-      </button>`).join('')}
-    </div>`).join('');
-  $$('.bk-opt').forEach(b => b.addEventListener('click', () => setService(b.dataset.id)));
-}
-function setService(id){
-  state.service = id;
-  $$('.bk-opt').forEach(b => {
-    const on = b.dataset.id === id;
-    b.classList.toggle('sel', on);
-    b.setAttribute('aria-checked', on);
-  });
-  updateSummary();
-}
-
-function renderBookBarbers(){
-  $('#bookBarbers').innerHTML = `
-    <button type="button" class="b-chip sel" data-id="first" role="radio" aria-checked="true">
-      <span class="cava first"><i data-lucide="zap" class="ic ic-20"></i></span><span>First available</span>
-    </button>
-    ${BARBERS.map(b => `
-      <button type="button" class="b-chip" data-id="${b.id}" role="radio" aria-checked="false">
-        <span class="cava"><img src="${pic(b.seed,160,160)}" alt="${b.name}"></span><span>${b.name.split(' ')[0]}</span>
-      </button>`).join('')}`;
-  $$('.b-chip').forEach(c => c.addEventListener('click', () => setBarber(c.dataset.id)));
-}
-function setBarber(id){
-  state.barber = (id === 'first') ? null : id;
-  const active = id === 'first' ? 'first' : id;
-  $$('.b-chip').forEach(c => {
-    const on = c.dataset.id === active;
-    c.classList.toggle('sel', on);
-    c.setAttribute('aria-checked', on);
-  });
-  updateSummary();
-}
-
-function buildDays(){
-  for (let i = 0; i < 14; i++){
+  const SHOP = { 2:[600,1200], 3:[600,1200], 4:[600,1200], 5:[600,1200], 6:[540,1080] };
+  const DAYS = Array.from({ length:7 }, (_, i) => {
     const d = new Date();
+    d.setHours(0,0,0,0);
     d.setDate(d.getDate() + i);
-    DAYS.push(d);
-  }
-  $('#dayStrip').innerHTML = DAYS.map((d, i) => {
-    const closed = (d.getDay() === 0 || d.getDay() === 1); // Sun & Mon closed
-    const dow = i === 0 ? 'Today' : DOWS[d.getDay()];
-    return `<button type="button" class="day${closed ? ' closed' : ''}" data-i="${i}" ${closed ? 'disabled' : ''}>
-      <span class="d-dow">${dow}</span><span class="d-num">${d.getDate()}</span>
-    </button>`;
-  }).join('');
-  $$('.day:not(.closed)').forEach(b => b.addEventListener('click', () => setDay(+b.dataset.i)));
-}
-function setDay(i){
-  state.dayIdx = i;
-  state.time = null;
-  $$('.day').forEach(b => b.classList.toggle('sel', +b.dataset.i === i));
-  renderSlots();
-  updateSummary();
-}
+    return d;
+  });
+  const state = { service:null, barber:null, dayIdx:null, time:null, name:'', phone:'' };
+  const sheet = $('#sheet');
 
-/* Deterministic pseudo-availability so the demo feels real but stable */
-function slotAvail(key, t){
-  let h = 7;
-  for (const ch of key + t) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
-  return h % 10 > 2;
-}
-function fmtTime(mins){
-  let h = Math.floor(mins / 60), m = mins % 60;
-  const ap = h >= 12 ? 'PM' : 'AM';
-  h = h % 12 || 12;
-  return `${h}:${String(m).padStart(2,'0')} ${ap}`;
-}
-function renderSlots(){
-  const grid = $('#slotGrid');
-  if (state.dayIdx == null){
-    grid.innerHTML = '<p class="slot-empty">Pick a day above to see open times.</p>';
-    return;
-  }
-  const d = DAYS[state.dayIdx];
-  const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
-  const isToday = state.dayIdx === 0;
-  const now = new Date();
-  const cutoff = now.getHours() * 60 + now.getMinutes() + 60;
-  const items = [];
-  for (let m = 600; m <= 1170; m += 30){
-    const t = fmtTime(m);
-    let ok = slotAvail(key, t);
-    if (isToday && m < cutoff) ok = false;
-    items.push({ t, ok });
-  }
-  if (!items.some(i => i.ok)){
-    grid.innerHTML = '<p class="slot-empty">Nothing left on this day — try another one.</p>';
-    return;
-  }
-  grid.innerHTML = items.map(i =>
-    `<button type="button" class="slot${i.ok ? '' : ' off'}" data-t="${i.t}" ${i.ok ? '' : 'disabled'}>${i.t}</button>`
-  ).join('');
-  $$('#slotGrid .slot:not(.off)').forEach(s => s.addEventListener('click', () => setTime(s.dataset.t)));
-}
-function setTime(t){
-  state.time = t;
-  $$('#slotGrid .slot').forEach(s => s.classList.toggle('sel', s.dataset.t === t));
-  updateSummary();
-}
-
-function dayLabel(i){
-  if (i === 0) return 'Today';
-  if (i === 1) return 'Tomorrow';
-  const d = DAYS[i];
-  return `${DOWS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
-}
-function updateSummary(){
-  const s = SERVICES.find(x => x.id === state.service);
-  const b = BARBERS.find(x => x.id === state.barber);
-  $('#sumService').textContent = s ? s.name : '—';
-  $('#sumBarber').textContent = b ? b.name : 'First available';
-  let when = '—';
-  if (state.dayIdx != null){
-    when = dayLabel(state.dayIdx);
-    if (state.time) when += ` · ${state.time}`;
-  }
-  $('#sumWhen').textContent = when;
-  $('#sumDur').textContent = s ? `${s.dur} min` : '—';
-  $('#sumTotal').textContent = '$' + (s ? s.price : 0);
-}
-
-/* ================= Confirmation (deliberately stops here — no booking logic) ================= */
-function openSheet(){
-  const s = SERVICES.find(x => x.id === state.service);
-  const b = BARBERS.find(x => x.id === state.barber);
-  const first = state.name ? esc(state.name.trim().split(' ')[0]) : '';
-  $('#sheetBody').innerHTML = `
-    <div class="ok-badge"><i data-lucide="check" class="ic ic-24"></i></div>
-    <h3>${first ? `See you soon, ${first}.` : 'See you soon.'}</h3>
-    <p class="sheet-sub">This is a design prototype, so nothing was actually booked. In the finished shop, <strong>${b ? esc(b.name.split(' ')[0]) : 'your barber'}</strong> would confirm by text and the chair would be yours.</p>
-    <dl class="sheet-recap">
-      <div><dt>Service</dt><dd>${s.name} · ${s.dur} min</dd></div>
-      <div><dt>Barber</dt><dd>${b ? b.name : 'First available'}</dd></div>
-      <div><dt>When</dt><dd>${dayLabel(state.dayIdx)} · ${state.time}</dd></div>
-      <div><dt>Total</dt><dd>$${s.price} · pay in shop</dd></div>
-    </dl>
-    <button class="pill pill-block" id="sheetDone" type="button">Done</button>`;
-  icons();
-  $('#sheetDone').addEventListener('click', closeSheet);
-  $('#sheetOverlay').classList.add('open');
-  setTimeout(() => $('#sheetDone').focus(), 120);
-}
-function closeSheet(){ $('#sheetOverlay').classList.remove('open'); }
-
-/* ================= Toast ================= */
-let toastTimer;
-function toast(msg, icon = 'info'){
-  const t = $('#toast');
-  t.innerHTML = `<i data-lucide="${icon}" class="ic ic-16"></i><span>${msg}</span>`;
-  icons();
-  t.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
-}
-
-/* ================= Router ================= */
-function parseHash(){
-  const h = location.hash.replace(/^#\/?/, '');
-  const [path, qs] = h.split('?');
-  const route = ['services','barbers','book'].includes(path) ? path : 'home';
-  return { route, params: new URLSearchParams(qs || '') };
-}
-function onRoute(){
-  const { route, params } = parseHash();
-  $$('.page').forEach(p => p.classList.toggle('on', p.id === 'page-' + route));
-  document.body.dataset.route = route;
-  $$('.nav-links a').forEach(a => a.classList.toggle('active', a.dataset.nav === route));
-  closeMenu();
-  hideFloaty();
-  try { window.scrollTo({ top: 0, behavior: 'instant' }); } catch(e){ window.scrollTo(0, 0); }
-
-  if (route === 'book'){
-    const msgs = [];
-    const sv = params.get('service');
-    if (sv && SERVICES.some(s => s.id === sv) && state.service !== sv){
-      setService(sv);
-      msgs.push(`${SERVICES.find(s => s.id === sv).name} selected`);
+  const fmtTime = (mins) => {
+    let h = Math.floor(mins / 60);
+    const m = mins % 60;
+    const ap = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    return `${h}:${String(m).padStart(2, '0')} ${ap}`;
+  };
+  const dateKey = (d) => `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  const isSameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const dayLabel = (i) => i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : `${DOWS[DAYS[i].getDay()]}, ${MONTHS[DAYS[i].getMonth()]} ${DAYS[i].getDate()}`;
+  const fullDayLabel = (i) => DAYS[i].toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+  const dur = () => state.service ? SERVICE_MAP[state.service].dur : 45;
+  const activeBarber = () => state.barber ? BARBER_MAP[state.barber] : null;
+  const dayEnabled = (i) => {
+    const d = DAYS[i];
+    const b = activeBarber();
+    return !!SHOP[d.getDay()] && (!b || b.work.includes(d.getDay()));
+  };
+  const slotBusy = (key, mins, barberId) => {
+    let h = 2166136261;
+    const s = `${key}-${mins}-${barberId}`;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 16777619);
     }
-    const bb = params.get('barber');
-    if (bb && BARBERS.some(b => b.id === bb) && state.barber !== bb){
-      setBarber(bb);
-      msgs.push(`Booking with ${BARBERS.find(b => b.id === bb).name}`);
+    return (h >>> 0) % 100 < 22;
+  };
+  const slotFree = (date, mins) => {
+    const b = activeBarber();
+    const key = dateKey(date);
+    if (b) return b.work.includes(date.getDay()) && !slotBusy(key, mins, b.id);
+    return BARBERS.some((x) => x.work.includes(date.getDay()) && !slotBusy(key, mins, x.id));
+  };
+  const anyFree = (date, mins) => BARBERS.some((b) => b.work.includes(date.getDay()) && !slotBusy(dateKey(date), mins, b.id));
+  const slotItems = (i, duration) => {
+    const d = DAYS[i];
+    const hours = SHOP[d.getDay()];
+    if (!hours || !dayEnabled(i)) return [];
+    const now = new Date();
+    const today = isSameDay(d, now);
+    const cutoff = today ? now.getHours() * 60 + now.getMinutes() + 60 : -1;
+    const items = [];
+    for (let m = hours[0]; m + duration <= hours[1]; m += 30) {
+      if (today && m < cutoff) continue;
+      items.push({ minutes:m, label:fmtTime(m), free:slotFree(d, m) });
     }
-    if (msgs.length) setTimeout(() => toast(msgs.join(' — ') + '.'), 400);
-  }
-  requestAnimationFrame(refreshReveals);
-}
-window.addEventListener('hashchange', onRoute);
-
-/* ================= Reveal on scroll + stat count-up ================= */
-const io = new IntersectionObserver(es => {
-  es.forEach(e => { if (e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
-}, { threshold: .12, rootMargin: '0px 0px -30px 0px' });
-function refreshReveals(){ $$('.rv:not(.in)').forEach(el => io.observe(el)); }
-
-function fmtNum(v, dec, comma){
-  let s = dec ? v.toFixed(dec) : String(Math.round(v));
-  if (comma) s = Number(s).toLocaleString('en-US');
-  return s;
-}
-function countUp(el){
-  const target = parseFloat(el.dataset.count);
-  const dec = +(el.dataset.dec || 0);
-  const comma = el.dataset.fmt === 'comma';
-  const suf = el.dataset.suffix || '';
-  if (RM){ el.textContent = fmtNum(target, dec, comma) + suf; return; }
-  const t0 = performance.now(), dur = 1400;
-  (function step(t){
-    const p = Math.min(1, (t - t0) / dur);
-    const e = 1 - Math.pow(1 - p, 3);
-    el.textContent = fmtNum(target * e, dec, comma) + suf;
-    if (p < 1) requestAnimationFrame(step);
-  })(t0);
-}
-const ioStats = new IntersectionObserver(es => {
-  es.forEach(e => { if (e.isIntersecting){ countUp(e.target); ioStats.unobserve(e.target); } });
-}, { threshold: .4 });
-
-/* ================= Nav / menu ================= */
-function initNav(){
-  addEventListener('scroll', () => {
-    $('#nav').classList.toggle('scrolled', scrollY > 8);
-  }, { passive: true });
-  $('#burger').addEventListener('click', () => {
-    const open = $('#mmenu').classList.toggle('open');
-    document.body.classList.toggle('menu-open', open);
-    $('#burger').setAttribute('aria-expanded', open);
-  });
-  $$('#mmenu a').forEach(a => a.addEventListener('click', closeMenu));
-  $('#toTop').addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-}
-function closeMenu(){
-  $('#mmenu').classList.remove('open');
-  document.body.classList.remove('menu-open');
-  $('#burger').setAttribute('aria-expanded', 'false');
-}
-
-/* ================= Zoom-reveal slider ================= */
-function initSlider(){
-  const zr = $('#zoomReveal');
-  if (!zr) return;
-  let x = 38, dragging = false;
-  const setX = v => {
-    x = Math.max(6, Math.min(94, v));
-    zr.style.setProperty('--x', x + '%');
+    return items;
   };
-  const posFrom = e => {
-    const r = zr.getBoundingClientRect();
-    return (e.clientX - r.left) / r.width * 100;
+  const firstOpenDay = () => {
+    for (let i = 0; i < DAYS.length; i++) if (dayEnabled(i) && slotItems(i, dur()).some((x) => x.free)) return i;
+    for (let i = 0; i < DAYS.length; i++) if (dayEnabled(i)) return i;
+    return null;
   };
-  zr.addEventListener('pointerdown', e => {
-    dragging = true;
-    zr.setPointerCapture(e.pointerId);
-    setX(posFrom(e));
-    zr.classList.add('used');
-  });
-  zr.addEventListener('pointermove', e => { if (dragging) setX(posFrom(e)); });
-  ['pointerup','pointercancel'].forEach(ev => zr.addEventListener(ev, () => dragging = false));
-  $('#zrGrip').addEventListener('keydown', e => {
-    if (e.key === 'ArrowLeft'){ setX(x - 4); zr.classList.add('used'); }
-    if (e.key === 'ArrowRight'){ setX(x + 4); zr.classList.add('used'); }
-  });
-  setX(38);
-}
-
-/* ================= Floating hover preview (desktop only) ================= */
-let hideFloaty = () => {};
-function initFloaty(){
-  if (!matchMedia('(hover:hover) and (pointer:fine) and (min-width:900px)').matches) return;
-  const fl = $('#floaty'), img = $('#floatyImg');
-  SERVICES.forEach(s => { const i = new Image(); i.src = pic(s.seed, 440, 560); });
-  let tx = 0, ty = 0, cx = 0, cy = 0, rot = 0;
-  const list = $('#svcTeaserList');
-  list.addEventListener('pointermove', e => { tx = e.clientX; ty = e.clientY; });
-  $$('.svc-row').forEach(row => {
-    row.addEventListener('pointerenter', () => { img.src = pic(row.dataset.seed, 440, 560); fl.classList.add('on'); });
-    row.addEventListener('pointerleave', () => fl.classList.remove('on'));
-  });
-  hideFloaty = () => fl.classList.remove('on');
-  (function loop(){
-    cx += (tx - cx) * .14;
-    cy += (ty - cy) * .14;
-    rot += (Math.max(-6, Math.min(6, (tx - cx) * .06)) - rot) * .12;
-    const x = Math.min(cx + 30, innerWidth - 246);
-    const y = Math.max(80, Math.min(cy - 150, innerHeight - 300));
-    fl.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg)`;
-    requestAnimationFrame(loop);
-  })();
-}
-
-/* ================= Quote rotator ================= */
-function initQuotes(){
-  const qs = $$('.q'), dots = $$('.q-dots button');
-  let i = 0, timer;
-  const show = n => {
-    qs.forEach((q, k) => q.classList.toggle('on', k === n));
-    dots.forEach((d, k) => d.classList.toggle('on', k === n));
-    i = n;
+  const findNextOpening = () => {
+    const now = new Date();
+    for (let i = 0; i < DAYS.length; i++) {
+      const d = DAYS[i];
+      const hours = SHOP[d.getDay()];
+      if (!hours) continue;
+      const today = isSameDay(d, now);
+      const cutoff = today ? now.getHours() * 60 + now.getMinutes() + 60 : -1;
+      for (let m = hours[0]; m + 45 <= hours[1]; m += 30) {
+        if (today && m < cutoff) continue;
+        if (anyFree(d, m)) return { date:d, minutes:m, index:i };
+      }
+    }
+    return null;
   };
-  const start = () => {
-    if (RM) return;
-    clearInterval(timer);
-    timer = setInterval(() => show((i + 1) % qs.length), 6500);
+
+  const renderPrices = () => {
+    const cats = [...new Set(SERVICES.map((s) => s.cat))];
+    $('#priceList').innerHTML = cats.map((cat) => `
+      <div class="price-group">
+        <h3>${cat}</h3>
+        <ul class="price-list">
+          ${SERVICES.filter((s) => s.cat === cat).map((s) => `
+            <li><a class="price-row" href="#/book?service=${s.id}" aria-label="Book ${s.name}, ${s.dur} minutes, ${s.price} dollars">
+              <span class="pr-name">${s.name}</span>
+              <span class="pr-dur">${s.dur} min</span>
+              <span class="pr-price">$${s.price}</span>
+              <span class="pr-go" aria-hidden="true"><svg class="ic ic-14"><use href="#i-arrow"/></svg></span>
+            </a></li>`).join('')}
+        </ul>
+      </div>`).join('');
   };
-  dots.forEach(d => d.addEventListener('click', () => { show(+d.dataset.q); start(); }));
-  $('#quotes').addEventListener('pointerenter', () => clearInterval(timer));
-  $('#quotes').addEventListener('pointerleave', start);
-  start();
-}
 
-/* ================= Book: fields, confirm, validation ================= */
-function initFields(){
-  [['fName','name'], ['fPhone','phone'], ['fNotes','notes']].forEach(([id, key]) => {
-    const el = document.getElementById(id);
-    el.addEventListener('input', () => state[key] = el.value);
-  });
-}
-function flash(sel){
-  const el = $(sel);
-  el.classList.add('flash');
-  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  setTimeout(() => el.classList.remove('flash'), 1500);
-}
-function initConfirm(){
-  $('#confirmBtn').addEventListener('click', () => {
-    if (!state.service){ toast('Start by picking a service.', 'scissors'); flash('#stepService'); return; }
-    if (state.dayIdx == null){ toast('Choose a day for your visit.', 'calendar'); flash('#stepWhen'); return; }
-    if (!state.time){ toast('Now pick a time slot.', 'clock'); flash('#stepWhen'); return; }
-    openSheet();
-  });
-  $('#sheetOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeSheet(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape'){ closeSheet(); closeMenu(); } });
-}
+  const renderBarberCards = () => {
+    $('#barberGrid').innerHTML = BARBERS.map((b) => `
+      <a class="barber-card" href="#/book?barber=${b.id}" aria-label="Book with ${b.name}: ${b.spec}">
+        <div class="barber-media"><img src="${pic(b.seed, 560, 700)}" alt="Portrait of ${b.name}" width="560" height="700" loading="lazy" decoding="async"></div>
+        <div class="barber-info">
+          <h3 class="barber-name">${b.name}</h3>
+          <p class="barber-spec">${b.spec}</p>
+          <span class="barber-book">Book with ${b.name.split(' ')[0]} <svg class="ic ic-14" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+        </div>
+      </a>`).join('');
+  };
 
-/* ================= Boot ================= */
-renderTeaser();
-renderChairs();
-renderServicesPage();
-renderBarbersPage();
-renderBookServices();
-renderBookBarbers();
-buildDays();
-renderSlots();
-updateSummary();
-initNav();
-initSlider();
-initFloaty();
-initQuotes();
-initFields();
-initConfirm();
-icons();
- $$('.stat-n').forEach(el => ioStats.observe(el));
-onRoute();
+  const renderServiceOptions = () => {
+    const cats = [...new Set(SERVICES.map((s) => s.cat))];
+    $('#bookServices').innerHTML = cats.map((cat) => `
+      <div class="svc-group">
+        <h3>${cat}</h3>
+        <div class="svc-list">
+          ${SERVICES.filter((s) => s.cat === cat).map((s) => `
+            <label class="svc-opt">
+              <input class="control-input" type="radio" name="service" value="${s.id}" ${state.service === s.id ? 'checked' : ''}>
+              <span class="svc-in">
+                <span class="opt-check" aria-hidden="true"><svg class="ic ic-12"><use href="#i-check"/></svg></span>
+                <span class="opt-name">${s.name}<span class="opt-dur">${s.dur} min</span></span>
+                <span class="opt-price">$${s.price}</span>
+              </span>
+            </label>`).join('')}
+        </div>
+      </div>`).join('');
+  };
+
+  const renderBarberOptions = () => {
+    $('#bookBarbers').innerHTML = `
+      <label class="bc-opt">
+        <input class="control-input" type="radio" name="barber" value="first" aria-label="First available barber" ${!state.barber ? 'checked' : ''}>
+        <span class="bc-in">
+          <span class="bc-avatar first" aria-hidden="true">Any</span>
+          <span class="bc-name">First available</span>
+        </span>
+      </label>
+      ${BARBERS.map((b) => `
+      <label class="bc-opt">
+        <input class="control-input" type="radio" name="barber" value="${b.id}" aria-label="${b.name}" ${state.barber === b.id ? 'checked' : ''}>
+        <span class="bc-in">
+          <span class="bc-avatar"><img src="${pic(b.seed, 160, 160)}" alt="" width="160" height="160" loading="lazy" decoding="async"></span>
+          <span class="bc-name">${b.name.split(' ')[0]}</span>
+        </span>
+      </label>`).join('')}`;
+  };
+
+  const renderDays = () => {
+    $('#dayStrip').innerHTML = DAYS.map((d, i) => {
+      const enabled = dayEnabled(i);
+      const label = i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : DOWS[d.getDay()];
+      return `
+        <label class="day-opt${enabled ? '' : ' is-off'}">
+          <input class="control-input" type="radio" name="day" value="${i}" aria-label="${fullDayLabel(i)}${enabled ? '' : ', not available'}" ${enabled ? '' : 'disabled'} ${state.dayIdx === i ? 'checked' : ''}>
+          <span class="day-in"><span class="day-dow">${label}</span><span class="day-num">${d.getDate()}</span></span>
+        </label>`;
+    }).join('');
+  };
+
+  const renderTimes = () => {
+    const grid = $('#slotGrid');
+    if (state.dayIdx == null) {
+      grid.innerHTML = '<p class="slots-empty">Pick a day above to see open times.</p>';
+      return;
+    }
+    const items = slotItems(state.dayIdx, dur());
+    if (!items.length) {
+      grid.innerHTML = '<p class="slots-empty">No times on this day. Pick another one.</p>';
+      return;
+    }
+    if (!items.some((x) => x.free)) {
+      grid.innerHTML = '<p class="slots-empty">Fully booked this day. Try another one.</p>';
+      return;
+    }
+    grid.innerHTML = items.map((x) => `
+      <label class="slot-opt${x.free ? '' : ' is-off'}">
+        <input class="control-input" type="radio" name="time" value="${x.minutes}" aria-label="${x.label}${x.free ? '' : ', not available'}" ${x.free ? '' : 'disabled'} ${state.time === x.minutes ? 'checked' : ''}>
+        <span class="slot-in">${x.label}</span>
+      </label>`).join('');
+  };
+
+  const syncControls = () => {
+    $$('#bookServices input[name="service"]').forEach((i) => { i.checked = i.value === state.service; });
+    $$('#bookBarbers input[name="barber"]').forEach((i) => { i.checked = state.barber ? i.value === state.barber : i.value === 'first'; });
+  };
+
+  const updateServiceNote = () => {
+    const note = $('#serviceNote');
+    const s = state.service ? SERVICE_MAP[state.service] : null;
+    if (!s) {
+      note.hidden = true;
+      note.textContent = '';
+      return;
+    }
+    note.hidden = false;
+    note.textContent = `Includes ${s.inc.join(' · ')}.`;
+  };
+
+  const updateBarberNote = () => {
+    const b = activeBarber();
+    $('#barberNote').textContent = b
+      ? `${b.spec}. In the shop ${b.days}.`
+      : 'We’ll match you with the first open chair.';
+  };
+
+  const updateDetails = () => {
+    $('#stepDetails').hidden = state.time == null;
+  };
+
+  const renderSummary = (announce) => {
+    const s = state.service ? SERVICE_MAP[state.service] : null;
+    const b = activeBarber();
+    $('#sumService').textContent = s ? s.name : '—';
+    $('#sumBarber').textContent = b ? b.name : 'First available';
+    let when = '—';
+    if (state.dayIdx != null) {
+      when = dayLabel(state.dayIdx);
+      when += state.time != null ? ` · ${fmtTime(state.time)}` : ' · pick a time';
+    }
+    $('#sumWhen').textContent = when;
+    $('#sumDur').textContent = s ? `${s.dur} min` : '—';
+    $('#sumTotal').textContent = s ? `$${s.price}` : '—';
+
+    const btn = $('#confirmBtn');
+    const ready = !!s && state.time != null && state.dayIdx != null;
+    btn.disabled = !ready;
+    if (ready) btn.textContent = 'Confirm booking';
+    else if (state.dayIdx == null) btn.textContent = 'No times available';
+    else if (!s && state.time == null) btn.textContent = 'Choose a service and a time';
+    else if (!s) btn.textContent = 'Choose a service';
+    else btn.textContent = 'Choose a time';
+
+    if (announce) {
+      $('#live').textContent = `${s ? s.name : 'No service yet'}. ${b ? b.name : 'First available'}. ${when}. ${ready ? `Total $${s.price}. Ready to book.` : 'Not ready to book yet.'}`;
+    }
+  };
+
+  const setService = (id) => {
+    if (!SERVICE_MAP[id]) return;
+    state.service = id;
+    syncControls();
+    const items = state.dayIdx != null ? slotItems(state.dayIdx, dur()) : [];
+    if (state.time != null && !items.some((x) => x.minutes === state.time && x.free)) state.time = null;
+    if (state.dayIdx != null && !items.some((x) => x.free)) {
+      state.dayIdx = firstOpenDay();
+      state.time = null;
+      renderDays();
+    }
+    renderTimes();
+    updateServiceNote();
+    updateDetails();
+    renderSummary(true);
+  };
+
+  const setBarber = (id) => {
+    state.barber = id === 'first' ? null : (BARBER_MAP[id] ? id : null);
+    state.time = null;
+    syncControls();
+    const current = state.dayIdx;
+    const keep = current != null && dayEnabled(current) && slotItems(current, dur()).some((x) => x.free);
+    if (!keep) state.dayIdx = firstOpenDay();
+    renderDays();
+    renderTimes();
+    updateBarberNote();
+    updateDetails();
+    renderSummary(true);
+  };
+
+  const setDay = (i) => {
+    if (!dayEnabled(i)) return;
+    state.dayIdx = i;
+    state.time = null;
+    renderTimes();
+    updateDetails();
+    renderSummary(true);
+  };
+
+  const setTime = (mins) => {
+    const items = state.dayIdx != null ? slotItems(state.dayIdx, dur()) : [];
+    if (!items.some((x) => x.minutes === mins && x.free)) return;
+    state.time = mins;
+    updateDetails();
+    renderSummary(true);
+  };
+
+  const renderNextOpening = () => {
+    const next = findNextOpening();
+    const line = $('#heroNext');
+    if (!next) {
+      line.hidden = true;
+      return;
+    }
+    const d = next.date;
+    const word = next.index === 0 ? 'today' : next.index === 1 ? 'tomorrow' : `${DOWS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
+    $('#heroNextText').textContent = `Next opening ${word} · ${fmtTime(next.minutes)} · No deposit`;
+    line.hidden = false;
+  };
+
+  const openSheet = () => {
+    const s = state.service ? SERVICE_MAP[state.service] : null;
+    if (!s || state.time == null || state.dayIdx == null) return;
+    const b = activeBarber();
+    const first = state.name.trim() ? state.name.trim().split(/\s+/)[0] : '';
+    const when = `${fullDayLabel(state.dayIdx)} · ${fmtTime(state.time)}`;
+    sheet.innerHTML = `
+      <button class="sheet-x" type="button" data-close aria-label="Close booking summary"><svg class="ic ic-18" aria-hidden="true"><use href="#i-x"/></svg></button>
+      <div class="sheet-mark" aria-hidden="true"><svg class="ic ic-24"><use href="#i-check"/></svg></div>
+      <h2 id="sheetTitle">${first ? `See you soon, ${esc(first)}.` : 'See you soon.'}</h2>
+      <p class="sheet-sub">${b ? `${esc(b.name.split(' ')[0])} will have the chair ready.` : 'Your barber will have the chair ready.'} Here’s the plan:</p>
+      <dl class="recap">
+        <div><dt>Service</dt><dd>${s.name} · ${s.dur} min</dd></div>
+        <div><dt>Barber</dt><dd>${b ? b.name : 'First available'}</dd></div>
+        <div><dt>When</dt><dd>${when}</dd></div>
+        <div><dt>Total</dt><dd>$${s.price} · pay in shop</dd></div>
+      </dl>
+      <p class="sheet-fine">Free cancellation up to 4 hours before. To change it, call <a href="tel:+12125550184">(212) 555-0184</a>.</p>
+      <button class="btn btn-block" type="button" data-close>Done</button>
+      <p class="sheet-demo">Design prototype. No real booking was made.</p>`;
+    document.body.classList.add('modal-open');
+    sheet.showModal();
+  };
+
+  const initEvents = () => {
+    $('#bookServices').addEventListener('change', (e) => {
+      if (e.target.matches('input[name="service"]')) setService(e.target.value);
+    });
+    $('#bookBarbers').addEventListener('change', (e) => {
+      if (e.target.matches('input[name="barber"]')) setBarber(e.target.value);
+    });
+    $('#dayStrip').addEventListener('change', (e) => {
+      if (e.target.matches('input[name="day"]')) setDay(Number(e.target.value));
+    });
+    $('#slotGrid').addEventListener('change', (e) => {
+      if (e.target.matches('input[name="time"]')) setTime(Number(e.target.value));
+    });
+    $('#fName').addEventListener('input', (e) => { state.name = e.target.value; });
+    $('#fPhone').addEventListener('input', (e) => { state.phone = e.target.value; });
+    $('#confirmBtn').addEventListener('click', openSheet);
+    $('#toTop').addEventListener('click', () => {
+      window.scrollTo({ top:0, left:0, behavior: RM.matches ? 'auto' : 'smooth' });
+    });
+    sheet.addEventListener('click', (e) => {
+      if (e.target.closest('[data-close]')) {
+        sheet.close();
+        return;
+      }
+      if (e.target === sheet) {
+        const r = sheet.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) sheet.close();
+      }
+    });
+    sheet.addEventListener('close', () => {
+      document.body.classList.remove('modal-open');
+      if (document.body.dataset.route === 'book') $('#confirmBtn').focus({ preventScroll:true });
+    });
+  };
+
+  const ROUTE_TITLES = {
+    home:'Alder — Barbershop in SoHo, New York',
+    book:'Book a chair — Alder, SoHo'
+  };
+  const parseRoute = () => {
+    const raw = location.hash.replace(/^#\/?/, '');
+    const [path, qs] = raw.split('?');
+    return { route: path === 'book' ? 'book' : 'home', params: new URLSearchParams(qs || '') };
+  };
+  const isRouteHash = (h) => h === '' || h === '#' || h === '#/' || h.startsWith('#/');
+
+  const onRoute = (initial) => {
+    const { route, params } = parseRoute();
+    $$('.page').forEach((p) => p.classList.toggle('on', p.id === `page-${route}`));
+    document.body.dataset.route = route;
+    document.title = ROUTE_TITLES[route];
+
+    if (route === 'book') {
+      const sv = params.get('service');
+      if (sv && SERVICE_MAP[sv] && state.service !== sv) setService(sv);
+      const bb = params.get('barber');
+      if (bb && BARBER_MAP[bb] && state.barber !== bb) setBarber(bb);
+    }
+
+    if (sheet.open) sheet.close();
+    window.scrollTo(0, 0);
+    if (!initial) {
+      const h1 = document.querySelector(`#page-${route} h1`);
+      if (h1) h1.focus({ preventScroll:true });
+    }
+  };
+
+  renderPrices();
+  renderBarberCards();
+  renderServiceOptions();
+  renderBarberOptions();
+  state.dayIdx = firstOpenDay();
+  renderDays();
+  renderTimes();
+  updateServiceNote();
+  updateBarberNote();
+  updateDetails();
+  renderSummary(false);
+  renderNextOpening();
+  initEvents();
+
+  window.addEventListener('hashchange', () => {
+    if (isRouteHash(location.hash)) onRoute(false);
+  });
+
+  onRoute(true);
+})();
 </script>
 </body>
 </html>
