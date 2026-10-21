@@ -94,7 +94,7 @@ a,button{touch-action:manipulation}
 
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;background:var(--ink);color:#fff;font-size:15px;font-weight:600;letter-spacing:.01em;line-height:1;border:1px solid transparent;transition:background .2s ease,color .2s ease,transform .16s ease}
 .btn:hover{background:var(--acc);color:#fff}
-.btn:active{transform:scale(.985)}
+.btn:active{transform:scale(.97);transition-duration:.1s}
 .btn .ic{transition:transform .25s var(--ease)}
 .btn:hover .ic{transform:translateX(3px)}
 .btn:disabled{background:var(--surface-2);color:var(--ink-3);cursor:not-allowed;transform:none}
@@ -104,13 +104,15 @@ a,button{touch-action:manipulation}
 .btn-lg{min-height:56px;padding:0 30px;font-size:16px}
 .nav-book .short{display:none}
 
-.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;background:rgba(240,242,236,.86);-webkit-backdrop-filter:saturate(160%) blur(16px);backdrop-filter:saturate(160%) blur(16px);border-bottom:1px solid var(--line)}
+.nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);z-index:100;background:rgba(240,242,236,.86);-webkit-backdrop-filter:saturate(180%) blur(20px);backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid transparent;box-shadow:0 8px 24px rgba(27,29,25,0);transition:border-color .3s ease,box-shadow .3s ease}
+.nav.is-scrolled{border-bottom-color:var(--line);box-shadow:0 8px 24px rgba(27,29,25,.08)}
 .nav-in{display:flex;align-items:center;gap:24px;width:100%;max-width:1160px;height:100%;margin-inline:auto;padding-inline:clamp(20px,4vw,32px)}
 .brand{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--ink)}
 .brand .ic{color:var(--acc)}
 .nav-right{display:flex;align-items:center;gap:6px;margin-left:auto}
 .nav-phone{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);transition:color .2s ease,background .2s ease}
 .nav-phone:hover{color:var(--ink);background:var(--surface)}
+.nav-phone:active{background:var(--surface-2)}
 .nav-phone .ic{color:var(--acc)}
 body[data-route="book"] .nav-book{display:none}
 
@@ -134,6 +136,7 @@ body[data-route="book"] .nav-book{display:none}
 .price-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto 16px;align-items:center;gap:12px;min-height:48px;padding:0 8px;border-top:1px solid var(--line);font-size:15px;font-weight:600;color:var(--ink);transition:background .18s ease,color .18s ease}
 .price-list li:last-child .price-row{border-bottom:1px solid var(--line)}
 .price-row:hover{background:var(--surface)}
+.price-row:active{background:var(--surface-2)}
 .pr-dur{font-size:12px;font-weight:500;color:var(--ink-3);font-variant-numeric:tabular-nums}
 .pr-price{font-weight:600;font-variant-numeric:tabular-nums}
 .pr-go{display:grid;place-items:center;color:var(--ink-3);transition:color .18s ease,transform .22s var(--ease)}
@@ -143,7 +146,8 @@ body[data-route="book"] .nav-book{display:none}
 .price-help a:hover{color:var(--acc);text-decoration-color:var(--acc)}
 .barber-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(16px,2.4vw,28px)}
 .barber-card{display:flex;flex-direction:column;min-width:0}
-.barber-media{display:block;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:var(--surface)}
+.barber-media{display:block;aspect-ratio:4/5;border-radius:18px;overflow:hidden;background:var(--surface);transition:transform .15s ease}
+.barber-card:active .barber-media{transform:scale(.985)}
 .barber-media img{width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:filter .5s ease,transform .7s var(--ease)}
 .barber-card:hover .barber-media img,.barber-card:focus-visible .barber-media img{filter:grayscale(0);transform:scale(1.025)}
 .barber-info{display:block;padding-top:14px}
@@ -198,7 +202,10 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .svc-in{display:grid;grid-template-columns:20px minmax(0,1fr) auto;align-items:center;gap:12px;min-height:46px;padding:0 10px;border-top:1px solid var(--line);transition:background .18s ease}
 .svc-list > .svc-opt:last-child .svc-in{border-bottom:1px solid var(--line)}
 .svc-opt:hover .svc-in{background:var(--surface)}
+.svc-opt:active .svc-in{background:var(--surface-2)}
 .svc-opt input:checked + .svc-in{background:var(--acc-soft)}
+.svc-opt input:checked + .svc-in .opt-check{animation:checkPop .28s var(--ease)}
+@keyframes checkPop{0%{transform:scale(.55)}70%{transform:scale(1.08)}100%{transform:scale(1)}}
 .svc-opt input:focus-visible + .svc-in{outline:2px solid var(--acc);outline-offset:-2px;border-radius:4px}
 .opt-check{display:grid;place-items:center;width:20px;height:20px;border:1.5px solid var(--line-2);border-radius:50%;color:transparent;transition:background .18s ease,border-color .18s ease,color .18s ease}
 .svc-opt input:checked + .svc-in .opt-check,.bc-opt input:checked + .bc-in .bc-avatar{border-color:var(--acc);background:var(--acc);color:#fff}
@@ -218,8 +225,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .bc-opt input:checked + .bc-in .bc-avatar.first{background:var(--acc);border-color:var(--acc);color:#fff}
 .day-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-bottom:20px}
 .day-opt{display:block;min-width:0;cursor:pointer}
-.day-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:64px;border:1px solid var(--line);border-radius:12px;background:var(--bg);transition:border-color .18s ease,background .18s ease,color .18s ease}
+.day-in{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:64px;border:1px solid var(--line);border-radius:12px;background:var(--bg);transition:border-color .18s ease,background .18s ease,color .18s ease,transform .12s ease}
 .day-opt:hover .day-in{border-color:var(--ink-3)}
+.day-opt:active .day-in{transform:scale(.97)}
 .day-dow{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);line-height:1.2}
 .day-num{font-size:17px;font-weight:600;line-height:1;font-variant-numeric:tabular-nums}
 .day-opt input:checked + .day-in{background:var(--ink);border-color:var(--ink);color:#fff}
@@ -229,8 +237,9 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .day-opt.is-off .day-in{background:var(--surface)}
 .slot-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
 .slot-opt{display:block;min-width:0;cursor:pointer}
-.slot-in{display:flex;align-items:center;justify-content:center;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;transition:border-color .18s ease,background .18s ease,color .18s ease}
+.slot-in{display:flex;align-items:center;justify-content:center;height:44px;border:1px solid var(--line);border-radius:10px;background:var(--bg);font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;transition:border-color .18s ease,background .18s ease,color .18s ease,transform .12s ease}
 .slot-opt:hover .slot-in{border-color:var(--ink-3)}
+.slot-opt:active .slot-in{transform:scale(.96)}
 .slot-opt input:checked + .slot-in{background:var(--ink);border-color:var(--ink);color:#fff}
 .slot-opt input:focus-visible + .slot-in{outline:2px solid var(--acc);outline-offset:2px}
 .slot-opt.is-off{cursor:not-allowed;opacity:.3}
@@ -242,7 +251,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .field input::placeholder{color:var(--ink-3);opacity:1}
 .field input:hover{border-color:var(--ink-3)}
 .field input:focus{outline:none;border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
-.summary{position:sticky;top:calc(var(--nav-h) + 24px);padding:24px;border-radius:20px;border:1px solid rgba(27,29,25,.06);background:var(--surface)}
+.summary{position:sticky;top:calc(var(--nav-h) + 24px);padding:24px;border-radius:20px;border:1px solid rgba(27,29,25,.06);background:var(--surface);box-shadow:0 16px 40px rgba(27,29,25,.08)}
 .summary h2{margin-bottom:8px;font-size:16px;font-weight:600;letter-spacing:-.01em}
 .summary dl > div{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
 .summary dt{flex:none;font-size:12px;font-weight:500;color:var(--ink-3)}
@@ -256,10 +265,12 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .cancel-note a:hover{color:var(--acc)}
 .noscript{padding:calc(var(--nav-h) + 40px) 24px 24px;background:var(--surface);text-align:center;font-size:14px;line-height:1.6}
 
-dialog.sheet{position:fixed;inset:0;width:min(480px,calc(100vw - 32px));height:max-content;max-height:calc(100dvh - 32px);margin:auto;padding:clamp(24px,4vw,36px);overflow:auto;border:0;border-radius:24px;background:var(--bg);color:var(--ink);box-shadow:0 30px 90px rgba(27,29,25,.3)}
-dialog.sheet[open]{animation:sheetIn .35s var(--ease) both}
-dialog.sheet::backdrop{background:rgba(27,29,25,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px)}
-@keyframes sheetIn{from{opacity:0;transform:translateY(18px) scale(.985)}to{opacity:1;transform:none}}
+dialog.sheet{position:fixed;inset:0;width:min(480px,calc(100vw - 32px));height:max-content;max-height:calc(100dvh - 32px);margin:auto;padding:clamp(24px,4vw,36px);overflow:auto;border:0;border-radius:24px;background:var(--bg);color:var(--ink);box-shadow:0 30px 90px rgba(27,29,25,.3);opacity:0;transform:translateY(18px) scale(.985);transition:opacity .18s ease,transform .24s var(--ease),display .24s allow-discrete,overlay .24s allow-discrete}
+dialog.sheet[open]{opacity:1;transform:none;transition:opacity .3s ease,transform .4s var(--ease),display .4s allow-discrete,overlay .4s allow-discrete}
+@starting-style{dialog.sheet[open]{opacity:0;transform:translateY(18px) scale(.985)}}
+dialog.sheet::backdrop{background:rgba(27,29,25,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:0;transition:opacity .25s ease,display .25s allow-discrete,overlay .25s allow-discrete}
+dialog.sheet[open]::backdrop{opacity:1}
+@starting-style{dialog.sheet[open]::backdrop{opacity:0}}
 .sheet-x{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--ink-3);transition:background .18s ease,color .18s ease}
 .sheet-x:hover{background:var(--surface);color:var(--ink)}
 .sheet-mark{display:grid;place-items:center;width:48px;height:48px;margin-bottom:18px;border-radius:50%;background:var(--acc-soft);color:var(--acc)}
@@ -328,6 +339,15 @@ body.modal-open{overflow:hidden}
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+}
+@media (prefers-reduced-transparency:reduce){
+  .nav{background:var(--bg);-webkit-backdrop-filter:none;backdrop-filter:none}
+  .nav.is-scrolled{box-shadow:none}
+  dialog.sheet::backdrop{background:rgba(27,29,25,.62);-webkit-backdrop-filter:none;backdrop-filter:none}
+}
+@media (prefers-contrast:more){
+  .nav.is-scrolled{border-bottom-color:var(--ink-3)}
+  .summary{border-color:var(--line-2)}
 }
 @media (prefers-reduced-motion:no-preference){
   .hero-copy > :nth-child(1){animation:rise .8s var(--ease) both .04s}
@@ -398,7 +418,7 @@ body.modal-open{overflow:hidden}
         </div>
       </div>
       <div class="hero-media">
-        <img src="https://picsum.photos/seed/alder-hero/1200/1500.jpg" alt="Inside the Alder barbershop on Mercer Street" width="1200" height="1500" fetchpriority="high">
+        <img src="https://images.unsplash.com/photo-1702865272115-5afdbae975af?q=80&w=1200&h=1500&fit=crop&auto=format" alt="Inside the Alder barbershop on Mercer Street" width="1200" height="1500" fetchpriority="high">
       </div>
     </div>
   </section>
@@ -559,7 +579,6 @@ body.modal-open{overflow:hidden}
   const $ = (s, c = document) => c.querySelector(s);
   const $$ = (s, c = document) => [...c.querySelectorAll(s)];
   const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  const pic = (seed, w, h) => `https://picsum.photos/seed/${seed}/${w}/${h}.jpg`;
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
   const DOWS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -579,10 +598,22 @@ body.modal-open{overflow:hidden}
   const SERVICE_MAP = Object.fromEntries(SERVICES.map((s) => [s.id, s]));
 
   const BARBERS = [
-    { id:'marcus', name:'Marcus Bell', seed:'alder-marcus', spec:'Skin fades · Classic cuts · Beard work', days:'Tue – Sat', work:[2,3,4,5,6] },
-    { id:'dario', name:'Dario Ferretti', seed:'alder-dario', spec:'Scissor work · Texture · Long styles', days:'Wed – Sat', work:[3,4,5,6] },
-    { id:'june', name:'June Park', seed:'alder-june', spec:'Skin fades · Crops · Kid’s cuts', days:'Tue – Sat', work:[2,3,4,5,6] },
-    { id:'elias', name:'Elias Ward', seed:'alder-elias', spec:'Straight razor · Beard · Grey blend', days:'Thu – Sat', work:[4,5,6] }
+    { id:'marcus', name:'Marcus Bell', spec:'Skin fades · Classic cuts · Beard work', days:'Tue – Sat', work:[2,3,4,5,6],
+      photo:'https://images.unsplash.com/photo-1682989356229-a244c8903492?q=80&w=560&h=700&fit=crop&auto=format',
+      thumb:'https://images.unsplash.com/photo-1682989356229-a244c8903492?q=80&w=160&h=160&fit=crop&auto=format',
+      photoAlt:'A skin fade being shaped with clippers' },
+    { id:'dario', name:'Dario Ferretti', spec:'Scissor work · Texture · Long styles', days:'Wed – Sat', work:[3,4,5,6],
+      photo:'https://images.pexels.com/photos/4862662/pexels-photo-4862662.jpeg?auto=compress&cs=tinysrgb&w=560&h=700&fit=crop',
+      thumb:'https://images.pexels.com/photos/4862662/pexels-photo-4862662.jpeg?auto=compress&cs=tinysrgb&w=160&h=160&fit=crop',
+      photoAlt:'Scissor-over-comb work in progress' },
+    { id:'june', name:'June Park', spec:'Skin fades · Crops · Kid’s cuts', days:'Tue – Sat', work:[2,3,4,5,6],
+      photo:'https://images.pexels.com/photos/6599031/pexels-photo-6599031.jpeg?auto=compress&cs=tinysrgb&w=560&h=700&fit=crop',
+      thumb:'https://images.pexels.com/photos/6599031/pexels-photo-6599031.jpeg?auto=compress&cs=tinysrgb&w=160&h=160&fit=crop',
+      photoAlt:'A barber talking through a cut with a client' },
+    { id:'elias', name:'Elias Ward', spec:'Straight razor · Beard · Grey blend', days:'Thu – Sat', work:[4,5,6],
+      photo:'https://images.unsplash.com/photo-1717089256239-dc2ed4d9dfc6?q=80&w=560&h=700&fit=crop&auto=format',
+      thumb:'https://images.unsplash.com/photo-1717089256239-dc2ed4d9dfc6?q=80&w=160&h=160&fit=crop&auto=format',
+      photoAlt:'A straight-razor shave in the chair' }
   ];
   const BARBER_MAP = Object.fromEntries(BARBERS.map((b) => [b.id, b]));
 
@@ -685,7 +716,7 @@ body.modal-open{overflow:hidden}
   const renderBarberCards = () => {
     $('#barberGrid').innerHTML = BARBERS.map((b) => `
       <a class="barber-card" href="#/book?barber=${b.id}" aria-label="Book with ${b.name}: ${b.spec}">
-        <div class="barber-media"><img src="${pic(b.seed, 560, 700)}" alt="Portrait of ${b.name}" width="560" height="700" loading="lazy" decoding="async"></div>
+        <div class="barber-media"><img src="${(b.photo)}" alt="${esc(b.photoAlt)}" width="560" height="700" loading="lazy" decoding="async"></div>
         <div class="barber-info">
           <h3 class="barber-name">${b.name}</h3>
           <p class="barber-spec">${b.spec}</p>
@@ -726,7 +757,7 @@ body.modal-open{overflow:hidden}
       <label class="bc-opt">
         <input class="control-input" type="radio" name="barber" value="${b.id}" aria-label="${b.name}" ${state.barber === b.id ? 'checked' : ''}>
         <span class="bc-in">
-          <span class="bc-avatar"><img src="${pic(b.seed, 160, 160)}" alt="" width="160" height="160" loading="lazy" decoding="async"></span>
+          <span class="bc-avatar"><img src="${b.thumb}" alt="" width="160" height="160" loading="lazy" decoding="async"></span>
           <span class="bc-name">${b.name.split(' ')[0]}</span>
         </span>
       </label>`).join('')}`;
@@ -905,6 +936,23 @@ body.modal-open{overflow:hidden}
       <p class="sheet-demo">Design prototype. No real booking was made.</p>`;
     document.body.classList.add('modal-open');
     sheet.showModal();
+    navigator.vibrate?.(12);
+  };
+
+  const initNavEdge = () => {
+    const nav = $('.nav');
+    let queued = false;
+    const sync = () => {
+      queued = false;
+      nav.classList.toggle('is-scrolled', window.scrollY > 2);
+    };
+    window.addEventListener('scroll', () => {
+      if (!queued) {
+        queued = true;
+        requestAnimationFrame(sync);
+      }
+    }, { passive:true });
+    sync();
   };
 
   const initEvents = () => {
@@ -987,6 +1035,7 @@ body.modal-open{overflow:hidden}
   renderSummary(false);
   renderNextOpening();
   initEvents();
+  initNavEdge();
 
   window.addEventListener('hashchange', () => {
     if (isRouteHash(location.hash)) onRoute(false);
