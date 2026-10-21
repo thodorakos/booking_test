@@ -1,0 +1,25 @@
+# Secrets & local state
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
+.env
+.env.*
+!.env.example
+
+# Wrangler / Workers
+.wrangler/
+.wrangler-smoke-*.json
+python_modules/
+node_modules/
+
+# Python
+.venv/
+.venv-workers/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Editors / OS
+.DS_Store
+.idea/
+.vscode/

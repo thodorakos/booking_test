@@ -1,0 +1,45 @@
+// wrangler.jsonc — Cloudflare Workers configuration for the barbershop API.
+// Reference: https://developers.cloudflare.com/wrangler/configuration/
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "barbershop-api",
+  "main": "src/main.py",
+
+  // Must be >= 2026-09-08 (Hyperdrive + Python Workers / asyncpg support) and
+  // ideally today's date at deploy time.
+  "compatibility_date": "2026-10-21",
+  "compatibility_flags": ["python_workers"],
+
+  "observability": { "enabled": true, "traces": { "enabled": true } },
+
+  // Hyperdrive pools and accelerates the Neon connection.
+  // Create yours first (see README step 2), then replace the id below:
+  //   uv run pywrangler hyperdrive create barbershop-db --caching-disabled \
+  //     --connection-string="postgres://hyperdrive-user:PASSWORD@ep-xxxx.eu-central-1.aws.neon.tech/neondb?sslmode=require"
+  //
+  // IMPORTANT: use Neon's DIRECT (non-pooled, no "-pooler" host) connection
+  // string — Hyperdrive does the pooling itself.
+  "hyperdrive": [
+    {
+      "binding": "HYPERDRIVE",
+      "id": "REPLACE_WITH_YOUR_HYPERDRIVE_ID"
+    }
+  ],
+
+  // Non-secret runtime configuration. All keys have safe defaults in code;
+  // they are listed explicitly so the shop policy is visible in one place.
+  // Secrets go in `wrangler secret` / `.dev.vars`, never here.
+  // For local Hyperdrive, export CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE.
+  "vars": {
+    "SHOP_TIMEZONE": "Europe/Athens",   // IANA zone; storage is always UTC
+    "SHOP_OPEN": "09:00",               // shop opens (local wall time)
+    "SHOP_CLOSE": "19:00",              // shop closes (local wall time)
+    "SLOT_GRID_MINUTES": "30",          // bookings start at :00 / :30
+    "BOOKING_LEAD_MINUTES": "60",       // minimum notice before start
+    "BOOKING_HORIZON_DAYS": "60",       // how far ahead customers may book
+    "CANCEL_CUTOFF_HOURS": "24",        // free customer cancellation cutoff
+    "CLOSED_WEEKDAYS": "6",             // 0=Mon ... 6=Sun; comma-separate for more
+    "ALLOWED_ORIGINS": "*",             // restrict to your frontend origins in production
+    "QUERY_TIMEOUT_SECONDS": "8"        // per-query asyncpg timeout
+  }
+}

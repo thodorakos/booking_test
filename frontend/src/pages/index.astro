@@ -1,0 +1,168 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import PriceList from '../components/PriceList.astro';
+import BarberGrid from '../components/BarberGrid.astro';
+import NextOpening from '../components/react/NextOpening';
+
+const ldJson = {
+  '@context': 'https://schema.org',
+  '@type': 'BarberShop',
+  name: 'Alder',
+  description: 'Master barbers, honest prices, and appointments that run on the minute in SoHo, New York.',
+  telephone: '+1-212-555-0184',
+  email: 'chair@alder.shop',
+  priceRange: '$$',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '228 Mercer Street',
+    addressLocality: 'New York',
+    addressRegion: 'NY',
+    postalCode: '10012',
+    addressCountry: 'US',
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '10:00',
+      closes: '20:00',
+    },
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: 'Saturday',
+      opens: '09:00',
+      closes: '18:00',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Alder — Barbershop in SoHo, New York"
+  description="Master barbers, honest prices, and appointments that run on the minute. Book a chair at Alder in SoHo, New York."
+  ldJson={ldJson}
+>
+  <section class="hero" aria-labelledby="homeTitle">
+    <div class="wrap hero-in">
+      <div class="hero-copy">
+        <h1 id="homeTitle" tabindex="-1">A better <em>hour</em><br />in the chair.</h1>
+        <p class="hero-sub">
+          Master barbers, honest prices, and appointments that start on time. Book the chair you want in about a
+          minute.
+        </p>
+        <div class="hero-actions">
+          <a class="btn btn-lg" href="/book" data-astro-prefetch="viewport">
+            Book a chair
+            <Icon name="arrow" size={16} />
+          </a>
+          <NextOpening client:idle />
+        </div>
+      </div>
+      <div class="hero-media">
+        <Image
+          src="https://images.unsplash.com/photo-1702865272115-5afdbae975af?q=80&w=1200&h=1500&fit=crop&auto=format"
+          alt="Inside the Alder barbershop on Mercer Street"
+          width={1200}
+          height={1500}
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+  </section>
+
+  <section class="section prices" id="prices" aria-labelledby="pricesTitle">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="pricesTitle">The price is the price.</h2>
+        <p class="section-sub">
+          Every service is priced up front, so there are no tiers or surprise upcharges. Pay in the shop by card or
+          cash.
+        </p>
+      </div>
+      <PriceList />
+      <p class="price-help" data-reveal>
+        Not sure what to book? <a href="/book?service=signature" data-astro-prefetch>Start with the Signature Cut</a>,
+        which begins with a consultation.
+      </p>
+    </div>
+  </section>
+
+  <section class="section barbers" aria-labelledby="barbersTitle">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="barbersTitle">Choose your barber.</h2>
+        <p class="section-sub">Pick one and that's who cuts your hair, every visit. You're never passed around the shop.</p>
+      </div>
+      <BarberGrid />
+    </div>
+  </section>
+
+  <section class="quote" aria-labelledby="quoteTitle">
+    <div class="wrap">
+      <h2 class="sr-only" id="quoteTitle">What clients say</h2>
+      <div class="rating" data-reveal>
+        <span class="rating-stars" aria-hidden="true">
+          <Icon name="star" size={12} class="star" />
+          <Icon name="star" size={12} class="star" />
+          <Icon name="star" size={12} class="star" />
+          <Icon name="star" size={12} class="star" />
+          <Icon name="star" size={12} class="star" />
+        </span>
+        <span>4.9 · 2,300+ reviews</span>
+      </div>
+      <blockquote data-reveal style="--reveal-i:1">
+        <p>“I stopped describing haircuts years ago. I just say ‘the usual’ and sit down.”</p>
+        <footer>Michael R. · a regular since 2016</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <section class="section visit" aria-labelledby="visitTitle">
+    <div class="wrap visit-grid">
+      <div class="visit-copy" data-reveal>
+        <h2 id="visitTitle">Ready when you are.</h2>
+        <p class="section-sub">Pick a service, a barber, and a time. It takes about a minute, the good kind.</p>
+        <a class="btn btn-lg" href="/book" data-astro-prefetch="viewport">
+          Book a chair
+          <Icon name="arrow" size={16} />
+        </a>
+        <p class="fineprint">
+          Booking takes about a minute, needs no account or deposit, and you can cancel free up to 4 hours before.
+        </p>
+      </div>
+      <dl class="visit-facts" data-reveal style="--reveal-i:1">
+        <div>
+          <dt>Find us</dt>
+          <dd>
+            228 Mercer Street, SoHo<br />
+            New York, NY 10012<br />
+            <a href="https://maps.google.com/?q=228+Mercer+Street+New+York" target="_blank" rel="noopener">
+              Directions
+              <Icon name="arrow-up-right" size={12} />
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt>Hours</dt>
+          <dd>
+            <span class="hours">
+              <span>Tue – Fri</span><span>10:00 – 20:00</span>
+              <span>Saturday</span><span>9:00 – 18:00</span>
+              <span>Sun – Mon</span><span>Closed</span>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt>Call</dt>
+          <dd>
+            <a href="tel:+12125550184">(212) 555-0184</a><br />
+            <a href="mailto:chair@alder.shop">chair@alder.shop</a>
+          </dd>
+        </div>
+      </dl>
+    </div>
+  </section>
+</BaseLayout>

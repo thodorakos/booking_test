@@ -1,0 +1,35 @@
+---
+import { SERVICES } from '../data/catalog';
+import Icon from './Icon.astro';
+
+const cats = [...new Set(SERVICES.map((s) => s.cat))];
+---
+
+<div class="price-grid">
+  {
+    cats.map((cat, i) => (
+      <div class="price-group" data-reveal style={`--reveal-i:${i}`}>
+        <h3>{cat}</h3>
+        <ul class="price-list">
+          {SERVICES.filter((s) => s.cat === cat).map((s) => (
+            <li>
+              <a
+                class="price-row"
+                href={`/book?service=${s.id}`}
+                data-astro-prefetch
+                aria-label={`Book ${s.name}, ${s.dur} minutes, ${s.price} dollars`}
+              >
+                <span class="pr-name">{s.name}</span>
+                <span class="pr-dur">{s.dur} min</span>
+                <span class="pr-price">${s.price}</span>
+                <span class="pr-go" aria-hidden="true">
+                  <Icon name="arrow" size={14} />
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    ))
+  }
+</div>

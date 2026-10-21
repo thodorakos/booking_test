@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import BookingFlow from '../components/react/BookingFlow';
+---
+
+<BaseLayout
+  title="Book a chair — Alder, SoHo"
+  description="Pick a barber, a service, and a time at Alder in SoHo. No account, no deposit, free cancellation up to four hours before."
+  route="book"
+>
+  <div class="wrap book-head">
+    <h1 id="bookTitle" tabindex="-1">Book a chair.</h1>
+    <p>Pick a barber, a service, and a time. No account, no deposit, and free cancellation up to four hours before.</p>
+  </div>
+
+  <noscript>
+    <p class="noscript">
+      The booking flow needs JavaScript. Call <a href="tel:+12125550184">(212) 555-0184</a> and we’ll find you a chair.
+    </p>
+  </noscript>
+
+  <BookingFlow client:load />
+</BaseLayout>

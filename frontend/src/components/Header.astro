@@ -1,0 +1,54 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  route?: 'home' | 'book';
+}
+
+const { route = 'home' } = Astro.props;
+---
+
+<header class="nav">
+  <div class="nav-in">
+    <a class="brand" href="/" aria-label="Alder — home">
+      <Icon name="scissors" size={18} />
+      <span>ALDER</span>
+    </a>
+    <nav class="nav-right" aria-label="Primary">
+      <a class="nav-phone" href="tel:+12125550184" aria-label="Call Alder at (212) 555-0184">
+        <Icon name="phone" size={16} />
+        <span>(212) 555-0184</span>
+      </a>
+      {
+        route !== 'book' && (
+          <a class="btn btn-sm nav-book" href="/book" data-astro-prefetch="viewport">
+            <span class="long">Book a chair</span>
+            <span class="short">Book</span>
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</header>
+
+<script>
+  const nav = document.querySelector('.nav');
+  if (nav) {
+    let queued = false;
+    const sync = () => {
+      queued = false;
+      nav.classList.toggle('is-scrolled', window.scrollY > 2);
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!queued) {
+          queued = true;
+          requestAnimationFrame(sync);
+        }
+      },
+      { passive: true },
+    );
+    sync();
+  }
+</script>

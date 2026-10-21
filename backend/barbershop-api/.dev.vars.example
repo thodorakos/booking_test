@@ -1,0 +1,15 @@
+# Secrets for LOCAL development only.
+# Copy this file to `.dev.vars` (which is git-ignored) and fill in real values.
+# Never commit real secrets. In production use:
+#   uv run pywrangler secret put ADMIN_API_KEY
+
+ADMIN_API_KEY=change-me-to-a-long-random-string
+
+# For local Hyperdrive, export this variable in your shell before pywrangler dev:
+# CLOUDFLARE_HYPERDRIVE_LOCAL_CONNECTION_STRING_HYPERDRIVE=postgres://user:password@localhost:5432/barbershop
+# Keep database credentials out of wrangler.jsonc.
+
+# Optional fallback DSN, used ONLY when the app runs outside Cloudflare
+# Workers (e.g. plain ASGI hosting). On Workers the HYPERDRIVE binding in
+# wrangler.jsonc takes precedence and this is ignored.
+# DATABASE_URL=postgres://hyperdrive-user:password@ep-xxxx.eu-central-1.aws.neon.tech/neondb?sslmode=require

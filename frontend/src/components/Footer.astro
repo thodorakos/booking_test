@@ -1,0 +1,21 @@
+---
+import Icon from './Icon.astro';
+---
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="/" aria-label="Alder — home">
+      <Icon name="scissors" size={16} />
+      <span>ALDER</span>
+    </a>
+    <p>© 2026 Alder Grooming Co. A design prototype; no real bookings are made.</p>
+    <button class="foot-top" type="button">Back to top <Icon name="arrow-up" size={12} /></button>
+  </div>
+</footer>
+
+<script>
+  document.querySelector('.foot-top')?.addEventListener('click', () => {
+    const smooth = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, left: 0, behavior: smooth ? 'smooth' : 'auto' });
+  });
+</script>

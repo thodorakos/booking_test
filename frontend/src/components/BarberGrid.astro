@@ -1,0 +1,25 @@
+---
+import { Image } from 'astro:assets';
+import { BARBERS } from '../data/catalog';
+import Icon from './Icon.astro';
+---
+
+<div class="barber-grid">
+  {
+    BARBERS.map((b, i) => (
+      <a class="barber-card" href={`/book?barber=${b.id}`} data-astro-prefetch data-reveal style={`--reveal-i:${i}`} aria-label={`Book with ${b.name}: ${b.spec}`}>
+        <div class="barber-media">
+          <Image src={b.photo} alt={b.photoAlt} width={560} height={700} loading="lazy" decoding="async" />
+        </div>
+        <div class="barber-info">
+          <h3 class="barber-name">{b.name}</h3>
+          <p class="barber-spec">{b.spec}</p>
+          <span class="barber-book">
+            Book with {b.name.split(' ')[0]}
+            <Icon name="arrow" size={14} />
+          </span>
+        </div>
+      </a>
+    ))
+  }
+</div>

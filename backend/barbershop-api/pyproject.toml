@@ -1,0 +1,21 @@
+[project]
+name = "barbershop-api"
+version = "1.0.0"
+description = "Barbershop booking backend: Cloudflare Workers (Python) + FastAPI + Neon Postgres via Hyperdrive"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi>=0.115",
+    "pydantic>=2.7",
+    "asyncpg>=0.30",
+    # zoneinfo() needs the IANA database; tzdata is pure Python and bundles cleanly on Workers.
+    "tzdata>=2024.1",
+]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    # pywrangler: wraps wrangler to run/deploy Python Workers and bundle dependencies.
+    "workers-py",
+    "workers-runtime-sdk",
+]
