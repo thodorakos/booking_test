@@ -7,6 +7,7 @@ import { ServiceStep } from './booking/ServiceStep';
 import { WhenStep } from './booking/WhenStep';
 import { DetailsStep } from './booking/DetailsStep';
 import { SummaryPanel } from './booking/SummaryPanel';
+import { ConfirmBar } from './booking/ConfirmBar';
 import { ShopNote } from './booking/ShopNote';
 import { ConfirmSheet } from './booking/ConfirmSheet';
 
@@ -100,6 +101,7 @@ export default function BookingFlow() {
       <SummaryPanel service={catalog.services.find((service) => service.id === serviceId)} slot={slot} barberName={catalog.barbers.find((barber) => barber.id === barberId)?.name || 'First available'} shop={catalog.shop} busy={busy || !!booking} uncertain={uncertain} />
       <ShopNote shop={catalog.shop} />
     </div>
+    <ConfirmBar service={catalog.services.find((service) => service.id === serviceId)} slot={slot} shop={catalog.shop} busy={busy} uncertain={uncertain} />
     <ConfirmSheet booking={booking} shop={catalog.shop} onClose={() => { setBooking(null); setSlot(null); setRevision((value) => value + 1); form.current?.querySelector<HTMLInputElement>('input[name="service"]:checked')?.focus(); }} />
   </form>;
 }

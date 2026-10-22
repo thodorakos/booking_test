@@ -15,7 +15,7 @@
 }
 *,*::before,*::after{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;color-scheme:light}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Archivo Variable','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;caret-color:var(--acc)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Archivo Variable','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;caret-color:var(--acc);-webkit-tap-highlight-color:transparent}
 h1,h2,h3,p,blockquote,figure,dl,dd{margin:0}
 ul{list-style:none;margin:0;padding:0}
 img{display:block;max-width:100%;height:auto}
@@ -57,7 +57,7 @@ a,button{touch-action:manipulation}
 .brand{display:inline-flex;align-items:center;gap:9px;font-size:14px;font-weight:700;letter-spacing:.2em;color:var(--ink)}
 .brand .ic{color:var(--acc)}
 .nav-right{display:flex;align-items:center;gap:6px;margin-left:auto}
-.nav-phone{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);transition:color .2s ease,background .2s ease}
+.nav-phone{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:999px;font-size:13px;font-weight:600;color:var(--ink-2);transition:color .2s ease,background .2s ease}
 .nav-phone:hover{color:var(--ink);background:var(--surface)}
 .nav-phone:active{background:var(--surface-2)}
 .nav-phone .ic{color:var(--acc)}
@@ -122,11 +122,11 @@ a,button{touch-action:manipulation}
 .visit-facts a .ic{display:inline;vertical-align:-2px;margin-left:2px}
 .hours{display:grid;grid-template-columns:auto auto;gap:2px 24px;width:max-content;max-width:100%}
 
-footer{border-top:1px solid var(--line);padding:28px 0 36px}
+footer{border-top:1px solid var(--line);padding:28px 0 calc(36px + env(safe-area-inset-bottom,0px))}
 .foot{display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap;font-size:12px;line-height:1.6;color:var(--ink-3)}
 .foot .brand{font-size:12px;letter-spacing:.16em;color:var(--ink)}
 .foot p{max-width:54ch}
-.foot-top{display:inline-flex;align-items:center;gap:6px;padding:8px 0;font-size:12px;font-weight:600;color:var(--ink-3);transition:color .2s ease}
+.foot-top{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 0;font-size:12px;font-weight:600;color:var(--ink-3);transition:color .2s ease}
 .foot-top:hover{color:var(--ink)}
 
 .book-head{padding-top:calc(var(--nav-h) + clamp(40px,6vw,64px));padding-bottom:clamp(28px,4vw,40px)}
@@ -194,7 +194,7 @@ footer{border-top:1px solid var(--line);padding:28px 0 36px}
 .slot-opt input:focus-visible + .slot-in{outline:2px solid var(--acc);outline-offset:2px}
 .slot-opt.is-off{cursor:not-allowed;opacity:.3}
 .slot-opt.is-off .slot-in{background:var(--surface);text-decoration:line-through;text-decoration-color:var(--line-2)}
-.slots-empty{grid-column:1/-1;padding:8px 0;font-size:13px;line-height:1.6;color:var(--ink-3)}
+.slots-empty{grid-column:1/-1;max-width:48ch;padding:10px 0;font-size:14px;line-height:1.6;color:var(--ink-3)}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field label{display:block;margin-bottom:7px;font-size:12px;font-weight:600}
 .field input{width:100%;height:48px;padding:0 14px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;transition:border-color .18s ease,box-shadow .18s ease}
@@ -223,10 +223,13 @@ dialog.sheet[open]{opacity:1;transform:none;transition:opacity .3s ease,transfor
 dialog.sheet::backdrop{background:rgba(27,29,25,.42);-webkit-backdrop-filter:blur(5px);backdrop-filter:blur(5px);opacity:0;transition:opacity .25s ease,display .25s allow-discrete,overlay .25s allow-discrete}
 dialog.sheet[open]::backdrop{opacity:1}
 @starting-style{dialog.sheet[open]::backdrop{opacity:0}}
-.sheet-x{position:absolute;top:12px;right:12px;display:grid;place-items:center;width:40px;height:40px;border-radius:50%;color:var(--ink-3);transition:background .18s ease,color .18s ease}
+@media (max-width:560px){
+  dialog.sheet{width:calc(100vw - 20px);margin:auto auto 10px;border-radius:26px 26px 18px 18px;max-height:calc(100dvh - 10px - env(safe-area-inset-bottom,0px))}
+}
+.sheet-x{position:absolute;top:10px;right:10px;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;color:var(--ink-3);transition:background .18s ease,color .18s ease}
 .sheet-x:hover{background:var(--surface);color:var(--ink)}
 .sheet-mark{display:grid;place-items:center;width:48px;height:48px;margin-bottom:18px;border-radius:50%;background:var(--acc-soft);color:var(--acc)}
-.sheet h2{padding-right:32px;font-family:'Newsreader Variable',Georgia,'Times New Roman',serif;font-size:clamp(2rem,5vw,2.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
+.sheet h2{padding-right:32px;font-family:'Newsreader Variable',Georgia,'Times New Roman',serif;font-size:clamp(1.72rem,5vw,2.5rem);font-weight:400;line-height:1.05;letter-spacing:-.02em}
 .sheet-sub{margin-top:12px;font-size:14px;line-height:1.6;color:var(--ink-2);text-wrap:pretty}
 .recap{margin-top:22px;border-top:1px solid var(--line)}
 .recap > div{display:flex;justify-content:space-between;gap:16px;padding:10px 0;border-bottom:1px solid var(--line)}
@@ -241,8 +244,9 @@ body.modal-open{overflow:hidden}
 .sheet-mark .sheet-check{stroke-dasharray:24 24;stroke-dashoffset:0}
 
 @media (max-width:1020px){
-  .book-grid{grid-template-columns:1fr;gap:40px}
+  .book-grid{grid-template-columns:1fr;gap:40px;padding-bottom:calc(clamp(72px,9vw,112px) + 92px + env(safe-area-inset-bottom,0px))}
   .book-rail{position:static;margin-top:12px}
+  .summary [type='submit']{display:none}
 }
 @media (max-width:960px){
   .hero-in{grid-template-columns:1fr;gap:40px}
@@ -270,6 +274,7 @@ body.modal-open{overflow:hidden}
   .brand{font-size:13px;letter-spacing:.16em}
   .book-head p{font-size:15px}
   .hero h1{line-height:.97}
+  .field input,.field select{font-size:16px}
 }
 @media (max-width:620px){
   .day-strip{display:flex;overflow-x:auto;padding-bottom:6px;scroll-snap-type:x proximity;scrollbar-width:none}
@@ -353,6 +358,8 @@ body.modal-open{overflow:hidden}
   @keyframes drawCheck{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
 
   .hero-next{animation:swapIn .3s var(--ease)}
+  .confirm-bar{animation:barIn .32s var(--ease) both}
+  @keyframes barIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
   /* Marketing page only: content below the fold rises in once on scroll.
      No-JS and reduced-motion users get the page with no hiding. */
@@ -406,3 +413,32 @@ body.modal-open{overflow:hidden}
 .manage-panel .admin-card>p{margin-block:12px}
 .foot{flex-wrap:wrap}
 @media(max-width:760px){.admin-catalog,.appointment{grid-template-columns:minmax(0,1fr)}.admin-filters{align-items:stretch}.admin-filters .field{min-width:100%;width:100%}.catalog-fields .field{min-width:0}.catalog-fields .field:first-child{flex-basis:100%}.bc-name{overflow-wrap:anywhere}.admin-card .btn{min-height:44px}}
+
+
+
+/* Public read states: skeletons while loading, one quiet row for errors. */
+.status-note{display:flex;flex-wrap:wrap;align-items:center;gap:6px 20px;min-height:56px;padding:6px 2px;margin:0;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.status-note .state-actions{display:flex;flex-wrap:wrap;align-items:center;gap:2px 20px}
+.status-note .text-button{min-height:44px;font-size:13px}
+.sk{display:block;border-radius:10px;background-image:linear-gradient(100deg,var(--surface) 30%,var(--bg) 50%,var(--surface) 70%);background-size:200% 100%;animation:shimmer 1.6s linear infinite}
+@keyframes shimmer{from{background-position:100% 0}to{background-position:-100% 0}}
+.sk-row{height:44px;width:100%}
+.sk-tile{aspect-ratio:4/5;border-radius:18px}
+.sk-line{height:13px;border-radius:6px}
+@media (prefers-reduced-motion:reduce){.sk{animation:none;background-position:50% 0}}
+
+/* Phone-only sticky confirm bar: the CTA follows the thumb at every scroll
+   position, while the summary panel button stays reserved for the two-pane
+   desktop layout. Mounted together with a selected slot, inside the form. */
+.confirm-bar{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:80;display:none;align-items:center;gap:16px;padding:12px 12px 12px 18px;border-radius:22px;background:rgba(27,29,25,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);color:#fff;box-shadow:0 18px 44px rgba(27,29,25,.3),0 2px 8px rgba(27,29,25,.18)}
+.confirm-bar .confirm-bar-info{min-width:0;line-height:1.3}
+.confirm-bar .confirm-bar-info strong,.confirm-bar .confirm-bar-info span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.confirm-bar .confirm-bar-info strong{font-size:18px;font-weight:600;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.confirm-bar .confirm-bar-info span{font-size:12px;color:rgba(255,255,255,.75)}
+.confirm-bar .btn{flex:none;margin-left:auto;min-height:47px;padding:0 20px;background:#fff;color:var(--ink)}
+.confirm-bar .btn:hover,.confirm-bar .btn:active{background:var(--acc-light)}
+.confirm-bar .btn:disabled{background:rgba(255,255,255,.28);color:rgba(255,255,255,.85);cursor:not-allowed}
+@media (max-width:1020px){
+  body:has(.confirm-bar) footer{padding-bottom:calc(108px + env(safe-area-inset-bottom,0px))}
+}
+@media (prefers-reduced-transparency:reduce){.confirm-bar{background:#0d0e0c;-webkit-backdrop-filter:none;backdrop-filter:none}}
