@@ -39,7 +39,7 @@
     "BOOKING_HORIZON_DAYS": "60",       // how far ahead customers may book
     "CANCEL_CUTOFF_HOURS": "24",        // free customer cancellation cutoff
     "CLOSED_WEEKDAYS": "6",             // 0=Mon ... 6=Sun; comma-separate for more
-    "ALLOWED_ORIGINS": "*",             // restrict to your frontend origins in production
+    "ALLOWED_ORIGINS": "booking-test-2p4.pages.dev",             // restrict to your frontend origins in production
     "QUERY_TIMEOUT_SECONDS": "8"        // per-query asyncpg timeout
   }
 }
