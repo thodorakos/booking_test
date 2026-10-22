@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type SubmitEvent } from 'react';
 import { api, ApiError, errorMessage } from '../../data/api';
 import { formatPrice, type AdminBarber, type AdminService, type Booking, type Shop } from '../../data/catalog';
-import { formatWall, shopDate } from '../../data/availability';
+import { addDays, formatWall, shopDate } from '../../data/availability';
 
 type CatalogItem = AdminBarber | AdminService;
 
@@ -60,6 +60,7 @@ function AdminWorkspace({ adminKey, initialBarbers, onLogout }: { adminKey: stri
   const [services, setServices] = useState<AdminService[]>([]);
   const [shop, setShop] = useState<Shop | null>(null);
   const [filters, setFilters] = useState<{ from: string; to: string; barber: string; cancelled: boolean } | null>(null);
+  const [dateRange, setDateRange] = useState({ from: '', to: '' });
   const [revision, setRevision] = useState(0);
   const [calendar, setCalendar] = useState<{ query: string; bookings: Booking[]; error: string } | null>(null);
   const [busy, setBusy] = useState(false);
@@ -69,12 +70,13 @@ function AdminWorkspace({ adminKey, initialBarbers, onLogout }: { adminKey: stri
   const mounted = useRef(true);
   const query = JSON.stringify([filters, revision]);
   const current = calendar?.query === query ? calendar : null;
+  const today = shop ? shopDate(shop.timezone) : '';
 
   useEffect(() => {
     mounted.current = true;
     const controller = new AbortController();
     Promise.all([api<AdminService[]>('/admin/services', { headers: { 'X-Admin-Key': adminKey }, signal: controller.signal }), api<Shop>('/shop', { signal: controller.signal })])
-      .then(([items, policy]) => { setServices(items); setShop(policy); const today = shopDate(policy.timezone); setFilters({ from: today, to: today, barber: '', cancelled: true }); })
+      .then(([items, policy]) => { setServices(items); setShop(policy); const today = shopDate(policy.timezone); setDateRange({ from: today, to: today }); setFilters({ from: today, to: today, barber: '', cancelled: true }); })
       .catch((failure) => { if (!controller.signal.aborted) { if (failure instanceof ApiError && failure.status === 401) onLogout('Your admin key is no longer valid.'); else setError(errorMessage(failure)); } });
     return () => { mounted.current = false; controller.abort(); };
   }, [adminKey, onLogout]);
@@ -89,6 +91,14 @@ function AdminWorkspace({ adminKey, initialBarbers, onLogout }: { adminKey: stri
       .catch((failure) => { if (!controller.signal.aborted) { if (failure instanceof ApiError && failure.status === 401) onLogout('Your admin key is no longer valid.'); else setCalendar({ query, bookings: [], error: errorMessage(failure) }); } });
     return () => controller.abort();
   }, [adminKey, filters, query, onLogout]);
+
+  function applyFilters(form: HTMLFormElement, days?: number) {
+    const data = new FormData(form);
+    const from = days && shop ? shopDate(shop.timezone) : String(data.get('from'));
+    const to = days ? addDays(from, days - 1) : String(data.get('to'));
+    setDateRange({ from, to });
+    setFilters({ from, to, barber: String(data.get('barber')), cancelled: data.has('cancelled') });
+  }
 
   async function run(action: () => Promise<void>) {
     if (mutating.current) return;
@@ -142,16 +152,18 @@ function AdminWorkspace({ adminKey, initialBarbers, onLogout }: { adminKey: stri
     <section className="admin-card" aria-labelledby="appointmentsTitle">
       <div className="admin-section-head"><h2 id="appointmentsTitle">Appointments</h2><button className="text-button" disabled={busy || !filters} type="button" onClick={() => setRevision((value) => value + 1)}>Refresh</button></div>
       {filters ? <form className="admin-filters" onSubmit={(event) => {
-        event.preventDefault(); const data = new FormData(event.currentTarget);
-        setFilters({ from: String(data.get('from')), to: String(data.get('to')), barber: String(data.get('barber')), cancelled: data.has('cancelled') });
+        event.preventDefault(); applyFilters(event.currentTarget);
       }}>
-        <div className="field"><label htmlFor="fromDate">From</label><input id="fromDate" type="date" name="from" required defaultValue={filters.from} /></div>
-        <div className="field"><label htmlFor="toDate">To</label><input id="toDate" type="date" name="to" required defaultValue={filters.to} /></div>
+        <div className="admin-date-presets" role="group" aria-label="Quick date ranges starting today">
+          {([[1, 'Today'], [3, '3 days'], [5, '5 days'], [7, '1 week'], [14, '2 weeks']] as const).map(([days, label]) => <button key={days} className="btn btn-sm" type="button" disabled={busy} onClick={(event) => applyFilters(event.currentTarget.form!, days)} aria-pressed={dateRange.from === today && dateRange.to === addDays(today, days - 1)}>{label}</button>)}
+        </div>
+        <div className="field"><label htmlFor="fromDate">From</label><input id="fromDate" type="date" name="from" required value={dateRange.from} onChange={(event) => setDateRange({ ...dateRange, from: event.target.value })} /></div>
+        <div className="field"><label htmlFor="toDate">To</label><input id="toDate" type="date" name="to" required value={dateRange.to} onChange={(event) => setDateRange({ ...dateRange, to: event.target.value })} /></div>
         <div className="field"><label htmlFor="barberFilter">Barber</label><select id="barberFilter" name="barber"><option value="">All barbers</option>{barbers.map((barber) => <option key={barber.id} value={barber.id}>{barber.name}{barber.is_active ? '' : ' (inactive)'}</option>)}</select></div>
         <label className="check-label"><input type="checkbox" name="cancelled" defaultChecked /> Include cancelled</label>
         <button className="btn btn-sm" disabled={busy}>Apply filters</button>
       </form> : null}
-      <p className="fineprint">Date ranges can span up to 31 days. Inactive barbers remain in historical appointments.</p>
+      <p className="fineprint">Quick ranges start today and include the selected number of days. Choose any custom date range above. Inactive barbers remain in historical appointments.</p>
       {!current ? <p role="status">Loading appointments…</p> : current.error ? <p role="alert" className="form-message">{current.error} Use Refresh to retry.</p> : <>
         <p className="admin-count" role="status">{current.bookings.length} appointment{current.bookings.length === 1 ? '' : 's'}</p>
         {!current.bookings.length ? <p>No appointments in this range.</p> : <div className="appointment-list">{current.bookings.map((booking) => <article className="appointment" key={booking.id}>

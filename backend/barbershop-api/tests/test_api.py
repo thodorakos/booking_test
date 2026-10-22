@@ -217,6 +217,29 @@ class Bookings(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(await self.db.fetchval("SELECT count(*) FROM barbers"), 4)
         self.assertEqual(await self.db.fetchval("SELECT count(*) FROM services"), 5)
 
+    async def test_admin_calendar_defaults_to_today_and_accepts_long_ranges(self):
+        headers = {"x-admin-key": self.env.ADMIN_API_KEY}
+        created = await self.create()
+        self.assertEqual(created.status_code, 201, created.text)
+        today = datetime.now(settings_from_env(self.env).tz).date().isoformat()
+        default = await self.client.get("/admin/bookings", headers=headers)
+        self.assertEqual(default.status_code, 200, default.text)
+        self.assertEqual((default.json()["from"], default.json()["to"]), (today, today))
+        self.assertEqual(default.json()["bookings"], [])
+        for start, end in ((self.day - timedelta(days=365), self.day),
+                           (self.day, self.day + timedelta(days=365))):
+            calendar = await self.client.get("/admin/bookings", params={
+                "from": str(start), "to": str(end), "barber_id": BARBER,
+                "include_cancelled": "false",
+            }, headers=headers)
+            self.assertEqual(calendar.status_code, 200, calendar.text)
+            self.assertEqual([row["id"] for row in calendar.json()["bookings"]], [created.json()["id"]])
+        for dates, code in (({"from": "2026-02-30"}, "INVALID_DATE"),
+                            ({"from": str(self.day), "to": today}, "INVALID_DATE_RANGE")):
+            rejected = await self.client.get("/admin/bookings", params=dates, headers=headers)
+            self.assertEqual(rejected.status_code, 422, rejected.text)
+            self.assertEqual(rejected.json()["error"]["code"], code)
+
     async def test_admin_barber_lifecycle_preserves_bookings(self):
         headers = {"x-admin-key": self.env.ADMIN_API_KEY}
         added = await self.client.post("/admin/barbers", json={"name": "  Barber #5  "}, headers=headers)

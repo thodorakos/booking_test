@@ -6,7 +6,7 @@ export function ConfirmBar({ service, slot, shop, busy, uncertain }: { service: 
   return <div className="confirm-bar">
     <div className="confirm-bar-info">
       <strong>{service ? formatPrice(service.price_cents, shop.currency) : '—'}</strong>
-      <span>{slot ? formatWall(slot.starts_at_local) : 'No time selected'}</span>
+      <span>{slot ? formatWall(slot.starts_at_local) : service ? 'Choose a time' : 'Choose a service'}</span>
     </div>
     <button className="btn" type="submit" disabled={!ready || busy}>{busy ? 'Confirming…' : uncertain ? 'Retry booking' : 'Confirm booking'}</button>
   </div>;

@@ -29,6 +29,9 @@ an HTTP API origin.
   barbers and services. Admin cancellations bypass the customer cutoff. The key
   is held in tab memory only and is cleared on sign-out/reload. Every admin API
   request is authenticated by the backend; the page itself is static/public.
+  Appointments open on today in the shop timezone. Quick ranges cover Today,
+  3 days, 5 days, 1 week or 2 weeks, including today; custom ranges have no
+  31-day limit.
 
 The existing shop branding/contact details are presentation content; configure
 those for your real shop before going live. Prices use the backend’s EUR cents;

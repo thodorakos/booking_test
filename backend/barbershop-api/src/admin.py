@@ -34,8 +34,6 @@ from timeutils import local_today, naive_to_utc, parse_date_strict
 
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(_require_admin)])
 
-MAX_RANGE_DAYS = 31
-
 
 @router.get("/barbers", response_model=list[AdminBarberOut],
             summary="List all barbers, including inactive ones")
@@ -178,8 +176,6 @@ async def list_bookings(
 
     if d_from > d_to:
         raise ApiError(422, "INVALID_DATE_RANGE", "'from' must not be after 'to'.")
-    if (d_to - d_from).days > MAX_RANGE_DAYS:
-        raise ApiError(422, "INVALID_DATE_RANGE", f"Range is limited to {MAX_RANGE_DAYS} days.")
 
     # Inclusive local-day bounds converted to UTC instants.
     range_start = naive_to_utc(datetime.combine(d_from, time.min), st.tz)

@@ -297,7 +297,7 @@ Times + service names + status, **no customer PII** — safe to render publicly.
 | `POST /admin/services` | Add a service |
 | `PUT /admin/services/{id}` | Replace name, duration, price and active status; also restores a service |
 | `DELETE /admin/services/{id}` | Deactivate a service |
-| `GET /admin/bookings?from=2026-10-26&to=2026-10-26[&barber_id=…][&include_cancelled=false]` | Full calendar incl. names/phones; max 31-day range |
+| `GET /admin/bookings?from=2026-10-26&to=2026-10-26[&barber_id=…][&include_cancelled=false]` | Full calendar incl. names/phones; inclusive date range with no day-count limit; defaults to today in the shop timezone |
 | `POST /admin/bookings/{id}/cancel` body `{"reason":"no-show"}` | Cancel any booking any time |
 
 Create/update payloads:

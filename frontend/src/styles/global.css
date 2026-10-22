@@ -195,6 +195,28 @@ footer{border-top:1px solid var(--line);padding:28px 0 calc(36px + env(safe-area
 .slot-opt.is-off{cursor:not-allowed;opacity:.3}
 .slot-opt.is-off .slot-in{background:var(--surface);text-decoration:line-through;text-decoration-color:var(--line-2)}
 .slots-empty{grid-column:1/-1;max-width:48ch;padding:10px 0;font-size:14px;line-height:1.6;color:var(--ink-3)}
+.date-wrap{position:relative}
+.date-toggle{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:0 14px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;text-align:left;transition:border-color .18s ease,box-shadow .18s ease}
+.date-toggle:hover{border-color:var(--ink-3)}
+.date-toggle[aria-expanded='true']{border-color:var(--acc);box-shadow:0 0 0 3px var(--acc-soft)}
+.date-toggle .date-toggle-ph{color:var(--ink-3)}
+.date-toggle .ic{flex:none;color:var(--ink-3)}
+.date-picker{position:absolute;top:calc(100% + 8px);left:0;z-index:60;width:min(320px,calc(100vw - 40px));padding:14px;border:1px solid var(--line-2);border-radius:16px;background:var(--bg);box-shadow:0 24px 48px rgba(27,29,25,.16),0 6px 16px rgba(27,29,25,.08)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.cal-title{font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.cal-nav{display:grid;place-items:center;width:36px;height:36px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink-2);transition:background .18s ease,border-color .18s ease,color .18s ease}
+.cal-nav:hover:not(:disabled),.cal-nav:active:not(:disabled){border-color:var(--ink-3);color:var(--ink)}
+.cal-nav:disabled{opacity:.35;cursor:not-allowed}
+.cal-nav:focus-visible,.date-toggle:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal-dow{padding:6px 0 4px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-align:center;color:var(--ink-3)}
+.cal-day{display:grid;place-items:center;min-width:0;height:40px;border-radius:10px;background:none;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--ink);transition:background .15s ease,color .15s ease}
+.cal-day:hover:not(:disabled),.cal-day:active:not(:disabled){background:var(--surface-2)}
+.cal-day:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.cal-day:disabled{color:var(--ink-3);opacity:.38;cursor:not-allowed}
+.cal-day.is-today{box-shadow:inset 0 0 0 1px var(--line-2)}
+.cal-day[aria-pressed='true']{background:var(--ink);color:#fff}
+@media (max-width:640px){.date-toggle{font-size:16px}}
 .fields{display:grid;grid-template-columns:1fr 1fr;gap:16px}
 .field label{display:block;margin-bottom:7px;font-size:12px;font-weight:600}
 .field input{width:100%;height:48px;padding:0 14px;border:1px solid var(--line-2);border-radius:10px;background:var(--bg);color:var(--ink);font:inherit;font-size:14px;transition:border-color .18s ease,box-shadow .18s ease}
@@ -247,6 +269,7 @@ body.modal-open{overflow:hidden}
   .book-grid{grid-template-columns:1fr;gap:40px;padding-bottom:calc(clamp(72px,9vw,112px) + 92px + env(safe-area-inset-bottom,0px))}
   .book-rail{position:static;margin-top:12px}
   .summary [type='submit']{display:none}
+  .confirm-bar{display:flex}
 }
 @media (max-width:960px){
   .hero-in{grid-template-columns:1fr;gap:40px}
@@ -358,6 +381,7 @@ body.modal-open{overflow:hidden}
   @keyframes drawCheck{from{stroke-dashoffset:24}to{stroke-dashoffset:0}}
 
   .hero-next{animation:swapIn .3s var(--ease)}
+  .date-picker{animation:swapIn .18s var(--ease)}
   .confirm-bar{animation:barIn .32s var(--ease) both}
   @keyframes barIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
 
@@ -391,6 +415,11 @@ body.modal-open{overflow:hidden}
 .admin-filters{display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-top:12px}
 .admin-filters .field{flex:1;min-width:160px;margin-block:0}
 .admin-filters .check-label{margin-bottom:8px}
+.admin-date-presets{display:flex;flex-wrap:wrap;gap:8px;flex-basis:100%}
+.admin-filters .admin-date-presets .btn{min-height:44px;margin-top:0;background:var(--surface);color:var(--ink);border-color:var(--line-2)}
+.admin-date-presets .btn[aria-pressed='true']{background:var(--ink);color:#fff}
+.admin-date-presets .btn:hover:not(:disabled){background:var(--acc);color:#fff}
+.admin-date-presets .btn:disabled{opacity:.5}
 .check-label{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px}
 .check-label input{accent-color:var(--acc);width:18px;height:18px}
 .admin-catalog{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
