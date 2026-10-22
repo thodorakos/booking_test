@@ -73,14 +73,6 @@ SQL_BOOKING_BY_ID = SQL_BOOKING_SELECT + "WHERE bk.id = $1"
 
 SQL_BOOKING_BY_IDEMPOTENCY = SQL_BOOKING_SELECT + "WHERE bk.idempotency_key = $1"
 
-SQL_CATALOG_PAIR = """
-SELECT b.id AS barber_id, b.name AS barber_name, b.is_active AS barber_active,
-       s.id AS service_id, s.name AS service_name, s.is_active AS service_active,
-       s.duration_minutes, s.price_cents
-FROM barbers b LEFT JOIN services s ON s.id = $2
-WHERE b.id = $1
-"""
-
 SQL_INSERT_BOOKING = """
 WITH ins AS (
     INSERT INTO bookings (barber_id, service_id, starts_at, ends_at,
@@ -229,67 +221,71 @@ async def create_booking(payload: BookingCreate, request: Request):
                 f"(e.g. 10:00 or 10:30).",
             )
 
-        # -- 3. barber + service ------------------------------------------------
-        pair = await conn.fetchrow(
-            SQL_CATALOG_PAIR,
-            payload.barber_id,
-            payload.service_id,
-            timeout=st.query_timeout,
-        )
-        if pair is None or not pair["barber_active"]:
-            raise ApiError(
-                404, "BARBER_NOT_FOUND", f"No active barber with id {payload.barber_id}."
-            )
-        if not pair["service_active"]:
-            raise ApiError(
-                404, "SERVICE_NOT_FOUND", f"No active service with id {payload.service_id}."
-            )
-        duration = pair["duration_minutes"]
-
-        # -- 4. opening hours ----------------------------------------------------
-        wall_end = wall + timedelta(minutes=duration)
-        if (
-            wall.time() < st.open_time
-            or wall_end.time() > st.close_time
-            or wall_end.date() != day
-        ):
-            raise ApiError(
-                422,
-                "OUTSIDE_OPENING_HOURS",
-                f"Bookings must start at or after {st.open_time:%H:%M} and end "
-                f"by {st.close_time:%H:%M} local time.",
-            )
-
-        # -- 5. DST-safe conversion + lead time ----------------------------------
         try:
-            start_utc = naive_to_utc(wall, st.tz)
-        except WallClockError as exc:
-            raise ApiError(422, "INVALID_START_TIME", str(exc)) from None
-        end_utc = start_utc + timedelta(minutes=duration)
+            async with conn.transaction():
+                # Keep catalog edits/deactivation from racing the booking insert.
+                barber = await conn.fetchrow(
+                    "SELECT is_active FROM barbers WHERE id = $1 FOR SHARE",
+                    payload.barber_id, timeout=st.query_timeout,
+                )
+                if barber is None or not barber["is_active"]:
+                    raise ApiError(
+                        404, "BARBER_NOT_FOUND", f"No active barber with id {payload.barber_id}."
+                    )
+                service = await conn.fetchrow(
+                    "SELECT duration_minutes, price_cents, is_active FROM services "
+                    "WHERE id = $1 FOR SHARE",
+                    payload.service_id, timeout=st.query_timeout,
+                )
+                if service is None or not service["is_active"]:
+                    raise ApiError(
+                        404, "SERVICE_NOT_FOUND", f"No active service with id {payload.service_id}."
+                    )
+                duration = service["duration_minutes"]
 
-        if start_utc < now + timedelta(minutes=st.lead_minutes):
-            raise ApiError(
-                422,
-                "TOO_LATE_TO_BOOK",
-                f"Bookings need at least {st.lead_minutes} minutes of lead time.",
-            )
+                # -- 4. opening hours ------------------------------------------
+                wall_end = wall + timedelta(minutes=duration)
+                if (
+                    wall.time() < st.open_time
+                    or wall_end.time() > st.close_time
+                    or wall_end.date() != day
+                ):
+                    raise ApiError(
+                        422,
+                        "OUTSIDE_OPENING_HOURS",
+                        f"Bookings must start at or after {st.open_time:%H:%M} and end "
+                        f"by {st.close_time:%H:%M} local time.",
+                    )
 
-        # -- 6. INSERT; the DB constraint is the final authority -----------------
-        try:
-            row = await conn.fetchrow(
-                SQL_INSERT_BOOKING,
-                payload.barber_id,
-                payload.service_id,
-                start_utc,
-                end_utc,
-                payload.customer_name,
-                payload.customer_phone,
-                payload.notes,
-                idem,
-                pair["price_cents"],
-                fingerprint,
-                timeout=st.query_timeout,
-            )
+                # -- 5. DST-safe conversion + lead time -------------------------
+                try:
+                    start_utc = naive_to_utc(wall, st.tz)
+                except WallClockError as exc:
+                    raise ApiError(422, "INVALID_START_TIME", str(exc)) from None
+                end_utc = start_utc + timedelta(minutes=duration)
+
+                if start_utc < now + timedelta(minutes=st.lead_minutes):
+                    raise ApiError(
+                        422,
+                        "TOO_LATE_TO_BOOK",
+                        f"Bookings need at least {st.lead_minutes} minutes of lead time.",
+                    )
+
+                # -- 6. INSERT; the DB constraint is the final authority --------
+                row = await conn.fetchrow(
+                    SQL_INSERT_BOOKING,
+                    payload.barber_id,
+                    payload.service_id,
+                    start_utc,
+                    end_utc,
+                    payload.customer_name,
+                    payload.customer_phone,
+                    payload.notes,
+                    idem,
+                    service["price_cents"],
+                    fingerprint,
+                    timeout=st.query_timeout,
+                )
         except asyncpg.PostgresError as exc:
             # Two clients raced with the SAME idempotency key: the second one
             # replays the winner's booking instead of failing.

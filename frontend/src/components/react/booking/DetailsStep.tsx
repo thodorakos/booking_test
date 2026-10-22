@@ -11,7 +11,7 @@ export function DetailsStep({ visible, name, phone, onNameChange, onPhoneChange 
     <section className="step" id="stepDetails" aria-labelledby="stepDetailsTitle" hidden={!visible}>
       <div className="step-head">
         <h2 id="stepDetailsTitle">
-          <span className="step-num">4</span>Details <span className="opt-tag">Optional</span>
+          <span className="step-num">4</span>Details
         </h2>
       </div>
       <div className="fields">
@@ -20,6 +20,9 @@ export function DetailsStep({ visible, name, phone, onNameChange, onPhoneChange 
           <input
             id="fName"
             type="text"
+            required
+            maxLength={80}
+            name="customer_name"
             placeholder="Who’s in the chair?"
             autoComplete="name"
             value={name}
@@ -31,8 +34,12 @@ export function DetailsStep({ visible, name, phone, onNameChange, onPhoneChange 
           <input
             id="fPhone"
             type="tel"
+            required
+            minLength={6}
+            maxLength={24}
+            name="customer_phone"
             inputMode="tel"
-            placeholder="For a reminder text"
+            placeholder="+30 691 234 5678"
             autoComplete="tel"
             value={phone}
             onChange={(e) => onPhoneChange(e.target.value)}

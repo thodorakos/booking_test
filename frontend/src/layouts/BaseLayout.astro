@@ -9,7 +9,7 @@ import Footer from '../components/Footer.astro';
 interface Props {
   title: string;
   description: string;
-  route?: 'home' | 'book';
+  route?: 'home' | 'book' | 'admin' | 'manage';
   ldJson?: Record<string, unknown>;
 }
 
@@ -26,6 +26,7 @@ const ogImage =
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    {(route === 'admin' || route === 'manage') && <meta name="robots" content="noindex, nofollow" />}
     <meta name="theme-color" content="#f0f2ec" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="canonical" href={canonical} />

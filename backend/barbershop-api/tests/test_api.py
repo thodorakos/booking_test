@@ -42,7 +42,35 @@ class TimeRules(unittest.TestCase):
             self.assertTrue(all(slot.astimezone(st.tz).minute % grid == 0 for slot in slots))
 
 
-class BodyLimit(unittest.IsolatedAsyncioTestCase):
+class Middleware(unittest.IsolatedAsyncioTestCase):
+    async def test_public_shop_policy_uses_runtime_settings(self):
+        env = SimpleNamespace(SHOP_TIMEZONE="Europe/London", SHOP_OPEN="10:30",
+                              CLOSED_WEEKDAYS="5,6", CANCEL_CUTOFF_HOURS="12",
+                              BOOKING_HORIZON_DAYS="30", ADMIN_API_KEY="never-public")
+        async with client_for(env) as client:
+            response = await client.get("/shop")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "timezone": "Europe/London", "currency": "EUR", "open_time": "10:30",
+            "close_time": "19:00", "closed_weekdays": [5, 6],
+            "booking_horizon_days": 30, "booking_lead_minutes": 60,
+            "cancel_cutoff_hours": 12,
+        })
+
+    async def test_admin_cors_preflight(self):
+        env = SimpleNamespace(ALLOWED_ORIGINS="https://allowed.invalid")
+        async with client_for(env) as client:
+            for method in ("PUT", "DELETE"):
+                response = await client.options(f"/admin/barbers/{BARBER}", headers={
+                    "origin": "https://allowed.invalid",
+                    "access-control-request-method": method,
+                    "access-control-request-headers": "content-type,x-admin-key",
+                })
+                self.assertEqual(response.status_code, 204, response.text)
+                self.assertEqual(response.headers["access-control-allow-origin"], env.ALLOWED_ORIGINS)
+                self.assertIn(method, response.headers["access-control-allow-methods"].split(", "))
+                self.assertIn("x-admin-key", response.headers["access-control-allow-headers"])
+
     async def test_declared_streamed_and_underreported_sizes(self):
         async with client_for(SimpleNamespace(ALLOWED_ORIGINS="https://allowed.invalid")) as client:
             for size, expected in ((MAX_BODY_BYTES, 422), (MAX_BODY_BYTES + 1, 413)):
@@ -139,7 +167,11 @@ class Bookings(unittest.IsolatedAsyncioTestCase):
     async def test_history_survives_menu_edits_in_every_response(self):
         created = await self.create()
         self.assertEqual(created.status_code, 201, created.text)
-        await self.db.execute("UPDATE services SET duration_minutes=60, price_cents=9999 WHERE id=$1", uuid.UUID(SERVICE))
+        edited = await self.client.put(f"/admin/services/{SERVICE}", json={
+            "name": "New menu name", "duration_minutes": 60, "price_cents": 9999,
+            "is_active": True,
+        }, headers={"x-admin-key": self.env.ADMIN_API_KEY})
+        self.assertEqual(edited.status_code, 200, edited.text)
         lookup = await self.client.get(f"/bookings/{created.json()['id']}", params={"phone": self.payload["customer_phone"]})
         retry = await self.create()
         calendar = await self.client.get("/admin/bookings", params={"from": str(self.day)}, headers={"x-admin-key": self.env.ADMIN_API_KEY})
@@ -163,6 +195,164 @@ class Bookings(unittest.IsolatedAsyncioTestCase):
             response = await self.create(**{field: str(uuid.uuid4())})
             self.assertEqual(response.status_code, 404, response.text)
             self.assertEqual(response.json()["error"]["code"], code)
+
+    async def test_admin_catalog_requires_key(self):
+        for resource, item_id, payload in (
+            ("barbers", BARBER, {"name": "New barber"}),
+            ("services", SERVICE, {"name": "New service", "duration_minutes": 30}),
+        ):
+            for method, path, body in (
+                ("GET", f"/admin/{resource}", None),
+                ("POST", f"/admin/{resource}", payload),
+                ("PUT", f"/admin/{resource}/{item_id}", payload),
+                ("DELETE", f"/admin/{resource}/{item_id}", None),
+            ):
+                for headers in ({}, {"x-admin-key": "wrong-key"}):
+                    response = await self.client.request(method, path, json=body, headers=headers)
+                    self.assertEqual(response.status_code, 401, response.text)
+                self.env.ADMIN_API_KEY = None
+                response = await self.client.request(method, path, json=body, headers={"x-admin-key": "a-key"})
+                self.assertEqual(response.status_code, 503, response.text)
+                self.env.ADMIN_API_KEY = "test-admin-key"
+        self.assertEqual(await self.db.fetchval("SELECT count(*) FROM barbers"), 4)
+        self.assertEqual(await self.db.fetchval("SELECT count(*) FROM services"), 5)
+
+    async def test_admin_barber_lifecycle_preserves_bookings(self):
+        headers = {"x-admin-key": self.env.ADMIN_API_KEY}
+        added = await self.client.post("/admin/barbers", json={"name": "  Barber #5  "}, headers=headers)
+        self.assertEqual(added.status_code, 201, added.text)
+        barber = added.json()
+        self.assertEqual(barber["name"], "Barber #5")
+        self.assertTrue(barber["is_active"])
+        self.assertIn(barber["id"], [r["id"] for r in (await self.client.get("/barbers")).json()])
+        created = await self.create(barber_id=barber["id"])
+        self.assertEqual(created.status_code, 201, created.text)
+        for _ in range(2):
+            removed = await self.client.delete(f"/admin/barbers/{barber['id']}", headers=headers)
+            self.assertEqual(removed.status_code, 200, removed.text)
+            self.assertFalse(removed.json()["is_active"])
+        self.assertNotIn(barber["id"], [r["id"] for r in (await self.client.get("/barbers")).json()])
+        admin_list = await self.client.get("/admin/barbers", headers=headers)
+        self.assertIn(removed.json(), admin_list.json())
+        rejected = await self.create(barber_id=barber["id"], idempotency_key="inactive-barber-key")
+        self.assertEqual(rejected.status_code, 404, rejected.text)
+        self.assertEqual(rejected.json()["error"]["code"], "BARBER_NOT_FOUND")
+        for path in ("/availability", "/schedule"):
+            response = await self.client.get(path, params={
+                "barber_id": barber["id"], "service_id": SERVICE, "date": str(self.day),
+            })
+            self.assertEqual(response.status_code, 404, response.text)
+        retry = await self.create(barber_id=barber["id"])
+        self.assertEqual(retry.status_code, 200, retry.text)
+        self.assertEqual(retry.json()["id"], created.json()["id"])
+        lookup = await self.client.get(f"/bookings/{created.json()['id']}", params={"phone": self.payload["customer_phone"]})
+        self.assertEqual(lookup.json()["status"], "confirmed")
+        calendar = await self.client.get("/admin/bookings", params={"from": str(self.day)}, headers=headers)
+        self.assertEqual(calendar.json()["bookings"][0]["id"], created.json()["id"])
+        cancelled = await self.client.post(f"/admin/bookings/{created.json()['id']}/cancel", json={}, headers=headers)
+        self.assertEqual(cancelled.status_code, 200, cancelled.text)
+        restored = await self.client.put(f"/admin/barbers/{barber['id']}", json={"name": "Barber #5 renamed", "is_active": True}, headers=headers)
+        self.assertEqual(restored.status_code, 200, restored.text)
+        rebooked = await self.create(barber_id=barber["id"], idempotency_key="restored-barber-key")
+        self.assertEqual(rebooked.status_code, 201, rebooked.text)
+
+    async def test_admin_service_lifecycle(self):
+        headers = {"x-admin-key": self.env.ADMIN_API_KEY}
+        menu = {"name": "  Haircut #6  ", "duration_minutes": 45, "price_cents": 2500}
+        added = await self.client.post("/admin/services", json=menu, headers=headers)
+        self.assertEqual(added.status_code, 201, added.text)
+        service = added.json()
+        self.assertEqual(service["name"], "Haircut #6")
+        self.assertTrue(service["is_active"])
+        self.assertIn(service["id"], [r["id"] for r in (await self.client.get("/services")).json()])
+        created = await self.create(service_id=service["id"])
+        self.assertEqual(created.status_code, 201, created.text)
+        self.assertEqual(created.json()["duration_minutes"], 45)
+        self.assertEqual(created.json()["price_cents"], 2500)
+        for _ in range(2):
+            removed = await self.client.delete(f"/admin/services/{service['id']}", headers=headers)
+            self.assertEqual(removed.status_code, 200, removed.text)
+            self.assertFalse(removed.json()["is_active"])
+        self.assertNotIn(service["id"], [r["id"] for r in (await self.client.get("/services")).json()])
+        admin_list = await self.client.get("/admin/services", headers=headers)
+        self.assertIn(removed.json(), admin_list.json())
+        rejected = await self.create(service_id=service["id"], idempotency_key="inactive-service-key")
+        self.assertEqual(rejected.status_code, 404, rejected.text)
+        self.assertEqual(rejected.json()["error"]["code"], "SERVICE_NOT_FOUND")
+        availability = await self.client.get("/availability", params={"barber_id": BARBER, "service_id": service["id"], "date": str(self.day)})
+        self.assertEqual(availability.status_code, 404, availability.text)
+        retry = await self.create(service_id=service["id"])
+        self.assertEqual(retry.status_code, 200, retry.text)
+        self.assertEqual(retry.json(), created.json())
+        restored = await self.client.put(f"/admin/services/{service['id']}", json={
+            "name": "Haircut #6 renamed", "duration_minutes": 60,
+            "price_cents": 3000, "is_active": True,
+        }, headers=headers)
+        self.assertEqual(restored.status_code, 200, restored.text)
+        new_booking = await self.create(service_id=service["id"], starts_at=f"{self.day}T12:00", idempotency_key="restored-service-key")
+        self.assertEqual(new_booking.status_code, 201, new_booking.text)
+        self.assertEqual(new_booking.json()["duration_minutes"], 60)
+        self.assertEqual(new_booking.json()["price_cents"], 3000)
+
+    async def test_admin_catalog_validation_and_unknown_ids(self):
+        headers = {"x-admin-key": self.env.ADMIN_API_KEY}
+        for resource, valid, invalid in (
+            ("barbers", {"name": "Barber"}, (
+                {"name": " "}, {"name": "x" * 81}, {"name": None},
+                {"is_active": "false"}, {"is_active": 0}, {"unexpected": True},
+            )),
+            ("services", {"name": "Service", "duration_minutes": 30}, (
+                {"name": " "}, {"duration_minutes": 4}, {"duration_minutes": 241},
+                {"duration_minutes": 30.5}, {"duration_minutes": True},
+                {"price_cents": -1}, {"price_cents": 1.5}, {"price_cents": True},
+                {"price_cents": 2147483648}, {"is_active": "false"}, {"unexpected": True},
+            )),
+        ):
+            for changes in invalid:
+                response = await self.client.post(f"/admin/{resource}", json={**valid, **changes}, headers=headers)
+                self.assertEqual(response.status_code, 422, response.text)
+                self.assertEqual(response.json()["error"]["code"], "VALIDATION_ERROR")
+            for method in ("PUT", "DELETE"):
+                response = await self.client.request(method, f"/admin/{resource}/{uuid.uuid4()}", json=valid if method == "PUT" else None, headers=headers)
+                self.assertEqual(response.status_code, 404, response.text)
+                expected = "BARBER_NOT_FOUND" if resource == "barbers" else "SERVICE_NOT_FOUND"
+                self.assertEqual(response.json()["error"]["code"], expected)
+        for duration, price in ((5, 0), (240, 2147483647), (30, None)):
+            response = await self.client.post("/admin/services", json={
+                "name": "Unlisted", "duration_minutes": duration,
+                "price_cents": price, "is_active": False,
+            }, headers=headers)
+            self.assertEqual(response.status_code, 201, response.text)
+            self.assertNotIn(response.json()["id"], [r["id"] for r in (await self.client.get("/services")).json()])
+
+    async def test_booking_waits_for_concurrent_catalog_deactivation(self):
+        for table, item_id, code in (("barbers", BARBER, "BARBER_NOT_FOUND"),
+                                    ("services", SERVICE, "SERVICE_NOT_FOUND")):
+            pending = None
+            try:
+                async with self.db.transaction():
+                    await self.db.execute(f"UPDATE {table} SET is_active = FALSE WHERE id = $1", uuid.UUID(item_id))
+                    pending = asyncio.create_task(self.create(idempotency_key=f"deactivation-{table}"))
+                    async with asyncio.timeout(5):
+                        while not pending.done():
+                            await self.db.execute("SELECT pg_stat_clear_snapshot()")
+                            blocked = await self.db.fetchval("""
+                                SELECT EXISTS (SELECT 1 FROM pg_stat_activity
+                                WHERE datname = current_database() AND pid <> pg_backend_pid()
+                                  AND wait_event_type = 'Lock')
+                            """)
+                            if blocked:
+                                break
+                            await asyncio.sleep(0.01)
+                    self.assertFalse(pending.done(), "Booking must wait for the catalog update")
+                response = await pending
+                self.assertEqual(response.status_code, 404, response.text)
+                self.assertEqual(response.json()["error"]["code"], code)
+                self.assertEqual(await self.db.fetchval("SELECT count(*) FROM bookings"), 0)
+            finally:
+                if pending is not None:
+                    await asyncio.gather(pending, return_exceptions=True)
+                await self.db.execute(f"UPDATE {table} SET is_active = TRUE WHERE id = $1", uuid.UUID(item_id))
 
     async def test_legacy_key_fails_closed(self):
         await self.db.execute("ALTER TABLE bookings DROP COLUMN price_cents, DROP COLUMN request_fingerprint")

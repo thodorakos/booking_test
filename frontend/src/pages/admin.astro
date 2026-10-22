@@ -1,0 +1,9 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import AdminPage from '../components/react/AdminPage';
+---
+<BaseLayout title="Shop admin — Alder" description="Manage appointments, barbers, and services." route="admin">
+  <div class="wrap book-head"><h1>Shop admin.</h1><p>The day’s appointments, and the people and services behind them.</p></div>
+  <div class="wrap"><AdminPage client:load /></div>
+  <noscript><p class="wrap form-message">The admin page needs JavaScript.</p></noscript>
+</BaseLayout>

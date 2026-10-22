@@ -15,6 +15,21 @@ router = APIRouter(tags=["catalog"])
 API_VERSION = "1.0.0"
 
 
+@router.get("/shop", summary="Public shop time zone and booking policy")
+async def shop_info(request: Request):
+    st = settings_for(request)
+    return {
+        "timezone": st.tz_name,
+        "currency": "EUR",
+        "open_time": st.open_time.strftime("%H:%M"),
+        "close_time": st.close_time.strftime("%H:%M"),
+        "closed_weekdays": sorted(st.closed_weekdays),
+        "booking_horizon_days": st.horizon_days,
+        "booking_lead_minutes": st.lead_minutes,
+        "cancel_cutoff_hours": st.cancel_cutoff_hours,
+    }
+
+
 @router.get("/", response_model=ServiceInfo, summary="Service banner")
 async def root():
     return ServiceInfo(service="barbershop-api", version=API_VERSION, docs="/docs")

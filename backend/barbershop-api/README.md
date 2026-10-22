@@ -1,8 +1,12 @@
 # Barbershop Booking API
 
-Robust, deliberately simple booking backend for a 4-barber shop.
+Robust, deliberately simple booking backend for a small barbershop.
 **Cloudflare Workers (Python) + FastAPI + Neon Postgres via Hyperdrive.**
-No frontend here — this is the API your existing frontend talks to.
+The Astro frontend is in `../../frontend`. It reads the catalog and availability
+at runtime and includes `/book`, `/manage` and `/admin` pages. Set its
+`PUBLIC_API_URL` to this API's origin and allow the frontend origin in
+`ALLOWED_ORIGINS`. Admin access uses the existing `ADMIN_API_KEY` entered in the
+admin page; never put that secret in a public frontend environment variable.
 
 ```
 existing frontend ──HTTPS──> Cloudflare Worker (FastAPI, Python)
@@ -26,8 +30,8 @@ exclusion constraint, unique idempotency key, FK checks).
 
 | Rule | Value | Where |
 |---|---|---|
-| Barbers | 4 (seeded) | `migrations/002_seed.sql` |
-| Services | 5 fixed: Haircut 30m, Beard trim 30m, Haircut + beard 45m, Kids cut 30m, Full restyle 60m | `migrations/002_seed.sql` |
+| Barbers | 4 starter rows; add/edit/deactivate through admin | `migrations/002_seed.sql`, `/admin/barbers` |
+| Services | 5 starter services; names, duration, price and status editable through admin | `migrations/002_seed.sql`, `/admin/services` |
 | Opening hours | Mon–Sat 09:00–19:00, closed Sundays | `wrangler.jsonc` vars |
 | Slot grid | starts at :00 / :30 | `wrangler.jsonc` vars |
 | Booking window | min 1h lead time, max 60 days ahead | `wrangler.jsonc` vars |
@@ -54,6 +58,7 @@ Hours, time zone, grid and booking windows are environment variables (see
 | DST transitions (clocks jump) | Nonexistent/ambiguous local times rejected with a clear `422` | explicit fold/round-trip checks in `src/timeutils.py` (Athens transitions are 03:00–04:00 Sundays — shop closed — so they never fire in practice) |
 | Service price/duration changes later | Existing bookings keep their agreed price and exact duration | Price is stored per booking; duration comes from its stored start/end times |
 | Unknown/deactivated barber or service | `404` with distinct codes | FK + `is_active` checks before insert |
+| Admin removes or edits a catalog entry during booking | The booking uses the locked catalog values or sees the completed change; existing appointments remain intact | Shared row locks held through insertion; removal only sets `is_active=false` |
 | Booking spans closing time / past time / > horizon / off-grid | `422` with distinct codes | New-booking rules run after matching existing requests are recovered |
 | Oversized/malformed requests | `413` / `422` with field-level details | Worker byte limit before ASGI, ASGI byte counter, Pydantic |
 | Availability says free but slot taken between GET and POST | POST is the authority: `409 SLOT_TAKEN` | availability is advisory; the constraint decides |
@@ -154,9 +159,10 @@ uv run pywrangler deploy --dry-run
 ```
 
 The suite covers overlap and idempotency races, request changes, policy changes,
-price history, catalog errors, cancellation/rebooking, DST and body-size boundaries.
+price history, catalog management/auth/validation, concurrent deactivation,
+cancellation/rebooking, DST and body-size boundaries.
 The smoke check starts the real local Python Worker and checks Postgres access,
-booking/replay/conflict, CORS and streamed bodies at/over 64 KiB. Its log is
+admin catalog creation/edit/removal, booking/replay/conflict, CORS and streamed bodies at/over 64 KiB. Its log is
 `.wrangler/worker-smoke.log`. Unit/body checks run without `TEST_DATABASE_URL`;
 database checks are skipped until it is set.
 
@@ -186,6 +192,11 @@ tighter.
 
 ## API reference
 
+`GET /shop` returns the public runtime policy: `timezone`, `currency` (EUR),
+`open_time`, `close_time`, `closed_weekdays` (0=Mon, 6=Sun),
+`booking_horizon_days`, `booking_lead_minutes`, and `cancel_cutoff_hours`.
+The frontend uses this endpoint to keep displayed hours and booking rules in sync.
+
 Base URL: `https://<your-worker>.workers.dev` — JSON everywhere.
 All timestamps come in **two forms**: absolute `starts_at` / `ends_at
 ("2026-10-25T11:00:00Z")` and shop-local `starts_at_local` /
@@ -204,7 +215,7 @@ Seeded ids for testing (from `002_seed.sql`):
 [{"id":"11000000-0000-4000-8000-000000000001","name":"Nikos Papadakis"}]
 ```
 
-### `GET /services` — the fixed menu
+### `GET /services` — active services
 ```json
 [{"id":"22000000-0000-4000-8000-000000000001","name":"Haircut",
    "duration_minutes":30,"price_cents":1500}]
@@ -278,8 +289,43 @@ Times + service names + status, **no customer PII** — safe to render publicly.
 
 | Endpoint | Purpose |
 |---|---|
+| `GET /admin/barbers` | List all barbers, including inactive ones |
+| `POST /admin/barbers` | Add a barber |
+| `PUT /admin/barbers/{id}` | Replace name and active status; also restores an inactive barber |
+| `DELETE /admin/barbers/{id}` | Deactivate a barber |
+| `GET /admin/services` | List all services, including inactive ones |
+| `POST /admin/services` | Add a service |
+| `PUT /admin/services/{id}` | Replace name, duration, price and active status; also restores a service |
+| `DELETE /admin/services/{id}` | Deactivate a service |
 | `GET /admin/bookings?from=2026-10-26&to=2026-10-26[&barber_id=…][&include_cancelled=false]` | Full calendar incl. names/phones; max 31-day range |
 | `POST /admin/bookings/{id}/cancel` body `{"reason":"no-show"}` | Cancel any booking any time |
+
+Create/update payloads:
+
+```json
+{"name":"Barber #5","is_active":true}
+```
+
+```json
+{"name":"Haircut","duration_minutes":30,"price_cents":1500,"is_active":true}
+```
+
+Names are trimmed and must contain 1–80 characters. Durations must be integers
+from 5 to 240 minutes; prices are optional integer cents from 0 to 2147483647
+(`null` means unspecified). Unknown fields are rejected. `is_active` defaults
+to `true`. **PUT replaces all editable fields**: send the full item, including
+its intended status and price. Omitted prices become `null`.
+
+POST returns `201`; PUT and DELETE return `200`. Admin items include `id` and
+`is_active` alongside their fields. Unknown IDs return `404 BARBER_NOT_FOUND`
+or `404 SERVICE_NOT_FOUND`; malformed UUIDs return `422`.
+
+DELETE archives the row and is safe to repeat. Public catalog/availability and
+new bookings exclude inactive entries. Existing appointments remain confirmed,
+readable and cancellable, and matching retries still replay. Review future
+appointments in `/admin/bookings` and contact customers/cancel explicitly when
+a barber leaves; removing a barber does not cancel their calendar. A booking
+that wins the catalog lock can finish before deactivation completes.
 
 ### Error envelope (all errors, all endpoints)
 
@@ -328,16 +374,32 @@ All runtime knobs are `vars` in `wrangler.jsonc` (safe defaults in code):
 
 Secrets: `ADMIN_API_KEY` (required for `/admin/*`).
 
+## Before a public launch (no payments)
+
+The booking/create/lookup/cancel flow and admin calendar are implemented.
+The following gaps still need a launch decision:
+
+| Priority | Work | Current behavior |
+|---|---|---|
+| Before accepting real appointments | Date-specific shop closures and barber time off, including lunch breaks and leave | Every active barber follows the same weekly shop hours; no date/time blockouts exist. Separate weekly schedules are only needed if staff hours differ. |
+| Before opening the API publicly | Rate limiting on create/lookup/cancel and admin attempts; bot protection on new bookings | Anyone can currently submit appointments using an unverified phone number. Add [Workers rate limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/) and, for the public booking form, [Turnstile with server-side validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/). CORS does not stop direct API calls. |
+| Before connecting a staff dashboard | A private way for the owner/staff to authenticate | The backend accepts a shared admin key. Enter it privately or keep it behind a staff sign-in/server; never bundle it into public JavaScript. Individual staff access can use [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/) when needed. |
+| Before launch | Verify customer confirmation and return/cancel flow | The API returns a booking ID and supports lookup/cancellation. The customer must retain that reference. The frontend is outside this backend review. SMS/email reminders and rescheduling are useful follow-ups, not required for the first version. |
+| Before launch | Complete live configuration and an operations check | Set the real Hyperdrive ID with caching disabled, apply migrations, set the admin secret, configure real catalog/hours/origins, test booking then cancellation on staging, arrange uptime/error alerts and rehearse [Neon restore](https://neon.com/docs/postgres/backup-restore/branch-restore). Local checks do not verify these account settings. |
+
+All appointments are confirmed immediately. No payment integration, unpaid
+holds or hold-expiry Cron Trigger is needed for this version.
+
 ## Day-to-day ops
 
 - **Logs and traces**: both are enabled in `wrangler.jsonc`.
   `uv run pywrangler tail` (or dashboard → Workers Logs) shows structured
   events: `booking_created`, `booking_cancelled`, `db_error`,
   `unhandled_error` (+ `request_id` for cross-referencing error responses).
-- **Add/deactivate a barber**:
-  `INSERT INTO barbers (name) VALUES ('Stelios');` /
-  `UPDATE barbers SET is_active = FALSE WHERE id = '…';`
-- **Change a price/name/duration**: update the `services` row — existing
+- **Manage barbers/services**: use the protected `/admin/barbers` and
+  `/admin/services` endpoints above. DELETE deactivates; PUT with
+  `is_active=true` restores the same ID. No new migration is needed for these routes.
+- **Change a price/name/duration**: use `PUT /admin/services/{id}` — existing
   bookings keep their stored price and times; future bookings use the new values.
   Names continue to follow the current catalog.
 - **Upgrading the original schema**: apply `003_booking_snapshot.sql` once,
@@ -366,7 +428,7 @@ migrations/003_booking_snapshot.sql  stored price + request fingerprint
 src/main.py              Worker byte limit + official ASGI entry
 src/app.py               FastAPI app shared by Worker and regression checks
 src/bookings.py          create/get/cancel/availability/schedule routes + SQL
-src/admin.py             X-Admin-Key calendar + shop-side cancel
+src/admin.py             X-Admin-Key catalog management, calendar and shop-side cancel
 src/catalog.py           /health /barbers /services
 src/availability.py      slot engine (grid, hours, overlap, lead time)
 src/timeutils.py         Athens wall-time <-> UTC, DST edge detection

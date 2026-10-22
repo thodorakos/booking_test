@@ -18,7 +18,7 @@ from config import DEFAULTS, env_from_scope
 from errors import _payload, _request_id
 
 MAX_BODY_BYTES = 64 * 1024
-ALLOWED_METHODS = "GET, POST, OPTIONS"
+ALLOWED_METHODS = "GET, POST, PUT, DELETE, OPTIONS"
 MAX_AGE = "600"
 
 

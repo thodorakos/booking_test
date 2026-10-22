@@ -81,6 +81,22 @@ class AdminCancelRequest(BaseModel):
     reason: Optional[str] = Field(default=None, max_length=200)
 
 
+class BarberInput(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid", strict=True)
+
+    name: str = Field(min_length=1, max_length=80)
+    is_active: bool = True
+
+
+class ServiceInput(BaseModel):
+    model_config = ConfigDict(str_strip_whitespace=True, extra="forbid", strict=True)
+
+    name: str = Field(min_length=1, max_length=80)
+    duration_minutes: int = Field(ge=5, le=240)
+    price_cents: Optional[int] = Field(default=None, ge=0, le=2147483647)
+    is_active: bool = True
+
+
 # ---------------------------------------------------------------- responses
 
 
@@ -94,6 +110,14 @@ class ServiceOut(BaseModel):
     name: str
     duration_minutes: int
     price_cents: Optional[int] = None
+
+
+class AdminBarberOut(BarberOut):
+    is_active: bool
+
+
+class AdminServiceOut(ServiceOut):
+    is_active: bool
 
 
 class BookingOut(BaseModel):

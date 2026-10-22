@@ -7,9 +7,9 @@
   --ink-3:#5b6155;
   --line:rgba(27,29,25,.13);
   --line-2:rgba(27,29,25,.25);
-  --acc:#755a2d;
-  --acc-soft:rgba(117,90,45,.14);
-  --acc-light:#e4cfae;
+  --acc:#285a9e;
+  --acc-soft:rgba(40,90,158,.14);
+  --acc-light:#c9dcf3;
   --nav-h:64px;
   --ease:cubic-bezier(.22,1,.36,1);
 }
@@ -359,3 +359,50 @@ body.modal-open{overflow:hidden}
   html.js [data-reveal]{opacity:0;transform:translateY(16px);transition:opacity .55s var(--ease),transform .55s var(--ease);transition-delay:calc(var(--reveal-i,0)*70ms)}
   html.js [data-reveal].is-in{opacity:1;transform:none}
 }
+
+
+/* Live booking and shop management share the existing shop palette. */
+.booking-fields,.catalog-fields{margin:0;padding:0;border:0;min-width:0}
+.form-message{padding:16px;margin-bottom:16px;border:1px solid var(--line-2);border-radius:12px;background:var(--surface);color:var(--ink);overflow-wrap:anywhere}
+.text-button{display:inline-flex;align-items:center;min-height:44px;font:inherit;font-size:14px;font-weight:600;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.text-button:disabled{opacity:.5;cursor:not-allowed}
+.booking-reference{font-size:12px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.live-prices{max-width:760px}
+.live-prices .price-row{min-height:64px}
+.barber-initials{display:grid;place-items:center;aspect-ratio:4/3;border-radius:18px;background:var(--surface);color:var(--acc);font-family:'Newsreader Variable',Georgia,serif;font-size:clamp(40px,6vw,76px)}
+.live-barber:hover .barber-initials{background:var(--surface-2)}
+.admin-login{max-width:480px;margin:0 auto 80px}
+.admin-card{padding:clamp(20px,3vw,32px);border:1px solid var(--line-2);border-radius:20px;background:var(--bg)}
+.admin-card h2{font-family:'Newsreader Variable',Georgia,serif;font-size:30px;font-weight:400;line-height:1.2}
+.admin-card>p{margin-top:12px;color:var(--ink-2)}
+.admin-card .field{margin-block:16px}
+.admin-card form .btn{margin-top:8px}
+.field select{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line-2);border-radius:8px;width:100%;min-height:48px;padding:10px 12px}
+.admin-workspace{display:grid;gap:24px;margin-bottom:80px}
+.admin-toolbar,.admin-section-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.admin-toolbar p{color:var(--ink-2);font-size:14px}
+.admin-filters{display:flex;gap:16px;align-items:end;flex-wrap:wrap;margin-top:12px}
+.admin-filters .field{flex:1;min-width:160px;margin-block:0}
+.admin-filters .check-label{margin-bottom:8px}
+.check-label{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-size:14px}
+.check-label input{accent-color:var(--acc);width:18px;height:18px}
+.admin-catalog{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px}
+.catalog-row{padding-block:16px;border-bottom:1px solid var(--line)}
+.catalog-fields{display:flex;align-items:end;gap:12px;flex-wrap:wrap}
+.catalog-fields .field{flex:1;min-width:100px;margin:0}
+.catalog-fields .field:first-child{flex-basis:100%}
+.catalog-add-title{font-size:16px;margin-top:28px}
+.status-badge{display:inline-flex;width:fit-content;padding:4px 10px;border:1px solid var(--line-2);border-radius:999px;font-size:12px;text-transform:capitalize;background:var(--surface)}
+.admin-count{margin:24px 0 12px;font-size:14px;color:var(--ink-2)}
+.appointment-list{display:grid;gap:16px}
+.appointment{display:grid;grid-template-columns:minmax(0,1fr) minmax(180px,.6fr);gap:24px;padding:20px;border:1px solid var(--line);border-radius:12px}
+.appointment h3{font-size:18px;margin:8px 0}
+.appointment p{font-size:14px;margin-top:6px}
+.appointment .booking-reference{font-size:11px;color:var(--ink-3)}
+.cancel-form{align-self:center;min-width:0}
+.danger-text{color:#8c3029}
+.danger-button{background:#8c3029}
+.manage-panel{max-width:700px;display:grid;gap:24px;margin:0 auto 80px}
+.manage-panel .admin-card>p{margin-block:12px}
+.foot{flex-wrap:wrap}
+@media(max-width:760px){.admin-catalog,.appointment{grid-template-columns:minmax(0,1fr)}.admin-filters{align-items:stretch}.admin-filters .field{min-width:100%;width:100%}.catalog-fields .field{min-width:0}.catalog-fields .field:first-child{flex-basis:100%}.bc-name{overflow-wrap:anywhere}.admin-card .btn{min-height:44px}}

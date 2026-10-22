@@ -2,6 +2,7 @@
 
 - GET  /admin/bookings      day-range calendar with full customer details
 - POST /admin/bookings/{id}/cancel   cancel any booking, no cutoff
+- GET/POST/PUT/DELETE /admin/barbers and /admin/services   manage the catalog
 
 The key is a single shop secret set via `wrangler secret put ADMIN_API_KEY`
 (ADMIN_DISABLED 503 until it exists). Comparison is constant-time.
@@ -14,7 +15,16 @@ from datetime import datetime, time, timedelta
 
 from fastapi import APIRouter, Depends, Query, Request
 
-from api_models import AdminBookingsOut, AdminCancelRequest, BookingOut, booking_out
+from api_models import (
+    AdminBarberOut,
+    AdminBookingsOut,
+    AdminCancelRequest,
+    AdminServiceOut,
+    BarberInput,
+    BookingOut,
+    ServiceInput,
+    booking_out,
+)
 from bookings import SQL_BOOKING_SELECT
 from config import settings_for
 from db import db_connection
@@ -25,6 +35,127 @@ from timeutils import local_today, naive_to_utc, parse_date_strict
 router = APIRouter(prefix="/admin", tags=["admin"], dependencies=[Depends(_require_admin)])
 
 MAX_RANGE_DAYS = 31
+
+
+@router.get("/barbers", response_model=list[AdminBarberOut],
+            summary="List all barbers, including inactive ones")
+async def list_barbers(request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        rows = await conn.fetch(
+            "SELECT id, name, is_active FROM barbers ORDER BY name, id",
+            timeout=st.query_timeout,
+        )
+    return [dict(row) for row in rows]
+
+
+@router.post("/barbers", status_code=201, response_model=AdminBarberOut,
+             summary="Add a barber")
+async def create_barber(payload: BarberInput, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO barbers (name, is_active) VALUES ($1, $2) "
+            "RETURNING id, name, is_active",
+            payload.name, payload.is_active, timeout=st.query_timeout,
+        )
+    log_event("barber_created", barber_id=str(row["id"]), is_active=row["is_active"])
+    return dict(row)
+
+
+@router.put("/barbers/{barber_id}", response_model=AdminBarberOut,
+            summary="Replace a barber's name and active status")
+async def update_barber(barber_id: uuid.UUID, payload: BarberInput, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "UPDATE barbers SET name = $2, is_active = $3 WHERE id = $1 "
+            "RETURNING id, name, is_active",
+            barber_id, payload.name, payload.is_active, timeout=st.query_timeout,
+        )
+    if row is None:
+        raise ApiError(404, "BARBER_NOT_FOUND", "No barber with that id.")
+    log_event("barber_updated", barber_id=str(barber_id), is_active=row["is_active"])
+    return dict(row)
+
+
+@router.delete("/barbers/{barber_id}", response_model=AdminBarberOut,
+               summary="Deactivate a barber; preserve existing appointments")
+async def remove_barber(barber_id: uuid.UUID, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "UPDATE barbers SET is_active = FALSE WHERE id = $1 "
+            "RETURNING id, name, is_active",
+            barber_id, timeout=st.query_timeout,
+        )
+    if row is None:
+        raise ApiError(404, "BARBER_NOT_FOUND", "No barber with that id.")
+    log_event("barber_deactivated", barber_id=str(barber_id))
+    return dict(row)
+
+
+@router.get("/services", response_model=list[AdminServiceOut],
+            summary="List all services, including inactive ones")
+async def list_services(request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        rows = await conn.fetch(
+            "SELECT id, name, duration_minutes, price_cents, is_active FROM services "
+            "ORDER BY duration_minutes, name, id",
+            timeout=st.query_timeout,
+        )
+    return [dict(row) for row in rows]
+
+
+@router.post("/services", status_code=201, response_model=AdminServiceOut,
+             summary="Add a service")
+async def create_service(payload: ServiceInput, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "INSERT INTO services (name, duration_minutes, price_cents, is_active) "
+            "VALUES ($1, $2, $3, $4) "
+            "RETURNING id, name, duration_minutes, price_cents, is_active",
+            payload.name, payload.duration_minutes, payload.price_cents, payload.is_active,
+            timeout=st.query_timeout,
+        )
+    log_event("service_created", service_id=str(row["id"]), is_active=row["is_active"])
+    return dict(row)
+
+
+@router.put("/services/{service_id}", response_model=AdminServiceOut,
+            summary="Replace a service's name, duration, price and active status")
+async def update_service(service_id: uuid.UUID, payload: ServiceInput, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "UPDATE services SET name = $2, duration_minutes = $3, price_cents = $4, "
+            "is_active = $5 WHERE id = $1 "
+            "RETURNING id, name, duration_minutes, price_cents, is_active",
+            service_id, payload.name, payload.duration_minutes, payload.price_cents,
+            payload.is_active, timeout=st.query_timeout,
+        )
+    if row is None:
+        raise ApiError(404, "SERVICE_NOT_FOUND", "No service with that id.")
+    log_event("service_updated", service_id=str(service_id), is_active=row["is_active"])
+    return dict(row)
+
+
+@router.delete("/services/{service_id}", response_model=AdminServiceOut,
+               summary="Deactivate a service; preserve existing appointments")
+async def remove_service(service_id: uuid.UUID, request: Request):
+    st = settings_for(request)
+    async with db_connection(request) as conn:
+        row = await conn.fetchrow(
+            "UPDATE services SET is_active = FALSE WHERE id = $1 "
+            "RETURNING id, name, duration_minutes, price_cents, is_active",
+            service_id, timeout=st.query_timeout,
+        )
+    if row is None:
+        raise ApiError(404, "SERVICE_NOT_FOUND", "No service with that id.")
+    log_event("service_deactivated", service_id=str(service_id))
+    return dict(row)
 
 
 @router.get("/bookings", response_model=AdminBookingsOut,

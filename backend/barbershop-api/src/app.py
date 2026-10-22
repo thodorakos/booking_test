@@ -12,7 +12,7 @@ app = FastAPI(
     title="Barbershop Booking API",
     version="1.0.0",
     description=(
-        "Booking backend for a 4-barber shop: barbers, services, availability, "
+        "Barbershop backend: admin catalog management, availability, "
         "bookings and cancellations. No-double-booking is enforced by a Postgres "
         "exclusion constraint; retries are protected by idempotency keys. "
         "Interactive docs: GET /docs."

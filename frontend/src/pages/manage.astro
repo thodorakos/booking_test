@@ -1,0 +1,8 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ManageBooking from '../components/react/ManageBooking';
+---
+<BaseLayout title="Manage your booking — Alder" description="Look up or cancel your appointment using its reference and your phone number." route="manage">
+  <div class="wrap book-head"><h1>Manage your booking.</h1><p>Enter your reference and the phone number you used to book.</p></div>
+  <div class="wrap"><ManageBooking client:load /></div>
+</BaseLayout>

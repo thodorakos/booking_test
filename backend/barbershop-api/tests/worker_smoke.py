@@ -41,6 +41,7 @@ async def check_worker():
                 process = await asyncio.create_subprocess_exec(
                     str(Path(sys.executable).parent / "pywrangler"), "dev", "--local",
                     "--ip", "127.0.0.1", "--port", str(port), "--inspector-port", "0",
+                    "--var", "ADMIN_API_KEY:worker-smoke-admin",
                     "--config", str(config_path), cwd=ROOT, env=env,
                     stdout=log, stderr=log, start_new_session=True,
                 )
@@ -61,11 +62,22 @@ async def check_worker():
                             raise TimeoutError("Worker did not become ready within 240 seconds")
                         response = await client.get("/health")
                         assert response.status_code == 200, response.text
+                        admin_headers = {"x-admin-key": "worker-smoke-admin"}
+                        catalog = (("barbers", {"name": "Smoke Barber"}),
+                                   ("services", {"name": "Smoke Service", "duration_minutes": 30,
+                                                 "price_cents": 1500}))
+                        catalog_ids = {}
+                        for resource, data in catalog:
+                            response = await client.get(f"/admin/{resource}")
+                            assert response.status_code == 401, response.text
+                            response = await client.post(f"/admin/{resource}", json=data, headers=admin_headers)
+                            assert response.status_code == 201, response.text
+                            catalog_ids[resource] = response.json()["id"]
                         day = datetime.now(settings_from_env(SimpleNamespace()).tz).date() + timedelta(days=7)
                         while day.weekday() == 6:
                             day += timedelta(days=1)
-                        payload = dict(barber_id="11000000-0000-4000-8000-000000000001",
-                                       service_id="22000000-0000-4000-8000-000000000001",
+                        payload = dict(barber_id=catalog_ids["barbers"],
+                                       service_id=catalog_ids["services"],
                                        starts_at=f"{day}T10:00", customer_name="Worker Test",
                                        customer_phone="+306900000001", idempotency_key="worker-smoke-key")
                         created = await client.post("/bookings", json=payload)
@@ -84,6 +96,27 @@ async def check_worker():
                                 "content-type": "application/json", "origin": "https://allowed.invalid"})
                             assert response.status_code == expected, response.text
                             assert response.headers["access-control-allow-origin"] == "https://allowed.invalid"
+                        for resource, data in catalog:
+                            item_id = catalog_ids[resource]
+                            path = f"/admin/{resource}/{item_id}"
+                            for method in ("PUT", "DELETE"):
+                                response = await client.options(path, headers={
+                                    "origin": "https://allowed.invalid",
+                                    "access-control-request-method": method,
+                                    "access-control-request-headers": "content-type,x-admin-key"})
+                                assert method in response.headers["access-control-allow-methods"], response.text
+                            response = await client.delete(path, headers=admin_headers)
+                            assert response.status_code == 200 and not response.json()["is_active"], response.text
+                            public = await client.get(f"/{resource}")
+                            assert item_id not in [r["id"] for r in public.json()], public.text
+                            admin_list = await client.get(f"/admin/{resource}", headers=admin_headers)
+                            assert response.json() in admin_list.json(), admin_list.text
+                            retry = await client.post("/bookings", json=payload)
+                            assert retry.status_code == 200 and retry.json()["id"] == created.json()["id"], retry.text
+                            rejected = await client.post("/bookings", json={**payload, "idempotency_key": f"inactive-{resource}"})
+                            assert rejected.status_code == 404, rejected.text
+                            response = await client.put(path, json={**data, "name": data["name"] + " edited", "is_active": True}, headers=admin_headers)
+                            assert response.status_code == 200 and response.json()["is_active"], response.text
                         assert await db.fetchval("SELECT count(*) FROM bookings") == 1
                 except BaseException:
                     print(log_path.read_text().replace(dsn, "<test-database>"), file=sys.stderr)
@@ -96,7 +129,7 @@ async def check_worker():
                         except TimeoutError:
                             os.killpg(process.pid, signal.SIGKILL)
                             await process.wait()
-    print("Workers smoke checks passed: database, create/retry/conflict, streamed 64 KiB boundary, CORS.")
+    print("Workers smoke checks passed: database, admin catalog, create/retry/conflict, streamed 64 KiB boundary, CORS.")
 
 
 if __name__ == "__main__":
