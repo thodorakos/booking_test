@@ -96,6 +96,8 @@ async def check_worker():
                                 "content-type": "application/json", "origin": "https://allowed.invalid"})
                             assert response.status_code == expected, response.text
                             assert response.headers["access-control-allow-origin"] == "https://allowed.invalid"
+                            assert response.headers["cache-control"] == "no-store"
+                            assert response.headers["x-content-type-options"] == "nosniff"
                         for resource, data in catalog:
                             item_id = catalog_ids[resource]
                             path = f"/admin/{resource}/{item_id}"
@@ -118,6 +120,32 @@ async def check_worker():
                             response = await client.put(path, json={**data, "name": data["name"] + " edited", "is_active": True}, headers=admin_headers)
                             assert response.status_code == 200 and response.json()["is_active"], response.text
                         assert await db.fetchval("SELECT count(*) FROM bookings") == 1
+                        for path in ("/bookings/invalid", "/admin/barbers"):
+                            for _ in range(20):
+                                response = await client.get(path, headers={
+                                    "origin": "https://allowed.invalid", "x-admin-key": "wrong-key"})
+                                if response.status_code == 429:
+                                    break
+                            assert response.status_code == 429, response.text
+                            assert response.json()["error"]["code"] == "RATE_LIMITED", response.text
+                            assert response.headers["retry-after"] == "60"
+                            assert "Retry-After" in response.headers["access-control-expose-headers"]
+                            assert response.headers["access-control-allow-origin"] == "https://allowed.invalid"
+                        response = await client.get("/admin/barbers", headers=admin_headers)
+                        assert response.status_code == 200, response.text
+                        response = await client.post("/bookings", json=payload, headers={"origin": "https://evil.invalid"})
+                        assert response.status_code == 403, response.text
+                        response = await client.post("/bookings", content="{}", headers={"content-type": "text/plain"})
+                        assert response.status_code == 415, response.text
+                        for _ in range(140):
+                            response = await client.get("/shop")
+                            if response.status_code == 429:
+                                break
+                        assert response.status_code == 429, response.text
+                        response = await client.options("/bookings", headers={
+                            "origin": "https://allowed.invalid", "access-control-request-method": "POST",
+                            "access-control-request-headers": "content-type,idempotency-key"})
+                        assert response.status_code == 204, response.text
                 except BaseException:
                     print(log_path.read_text().replace(dsn, "<test-database>"), file=sys.stderr)
                     raise
@@ -129,7 +157,7 @@ async def check_worker():
                         except TimeoutError:
                             os.killpg(process.pid, signal.SIGKILL)
                             await process.wait()
-    print("Workers smoke checks passed: database, admin catalog, create/retry/conflict, streamed 64 KiB boundary, CORS.")
+    print("Workers smoke checks passed: database, admin catalog, create/retry/conflict, streamed 64 KiB boundary, CORS, rate limits and security headers.")
 
 
 if __name__ == "__main__":

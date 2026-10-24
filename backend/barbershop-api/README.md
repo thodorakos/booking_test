@@ -160,9 +160,11 @@ uv run pywrangler deploy --dry-run
 
 The suite covers overlap and idempotency races, request changes, policy changes,
 price history, catalog management/auth/validation, concurrent deactivation,
-cancellation/rebooking, DST and body-size boundaries.
+cancellation/rebooking, private lookup, DST, body-size boundaries, rate-limit enforcement,
+origin/JSON checks and security headers (including errors).
 The smoke check starts the real local Python Worker and checks Postgres access,
-admin catalog creation/edit/removal, booking/replay/conflict, CORS and streamed bodies at/over 64 KiB. Its log is
+admin catalog creation/edit/removal, booking/replay/conflict, CORS, native rate-limit bindings
+and streamed bodies at/over 64 KiB. Its log is
 `.wrangler/worker-smoke.log`. Unit/body checks run without `TEST_DATABASE_URL`;
 database checks are skipped until it is set.
 
@@ -271,9 +273,11 @@ Response body (also returned by GET/cancel):
 }
 ```
 
-### `GET /bookings/{id}?phone=%2B306912345678`
-Owner lookup (phone must match the booking; `X-Admin-Key` also works).
-Phone-in-URL is fine for this scale, but prefer POST bodies if you log URLs.
+### `POST /bookings/{id}/lookup`
+Owner lookup with `{"phone":"+306912345678"}` in the JSON body. The phone must
+match the booking; the frontend keeps it out of request URLs and access logs.
+The original `GET /bookings/{id}?phone=…` remains compatible for existing clients;
+prefer POST for new clients. A valid `X-Admin-Key` also permits lookup.
 
 ### `POST /bookings/{id}/cancel` — customer cancellation
 ```json
@@ -352,6 +356,10 @@ that wins the catalog lock can finish before deactivation completes.
 | `ADMIN_DISABLED` | 503 | `ADMIN_API_KEY` secret not set |
 | `DATABASE_UNAVAILABLE` / `QUERY_TIMEOUT` / `RETRY_LATER` | 503 | **Safe to retry** (with the same idempotency key) |
 | `PAYLOAD_TOO_LARGE` | 413 | Body over 64 KiB |
+| `RATE_LIMITED` | 429 | Wait for `Retry-After` seconds before retrying; CORS exposes this header |
+| `RATE_LIMIT_UNAVAILABLE` | 503 | Rate-limit binding missing or unavailable; requests fail closed |
+| `ORIGIN_NOT_ALLOWED` / `CORS_NOT_ALLOWED` | 403 | Browser origin, preflight method or header is not allowed |
+| `UNSUPPORTED_MEDIA_TYPE` | 415 | Send POST/PUT bodies as `application/json` |
 | `CONFIG_ERROR` / `INTERNAL` | 500 | Server-side; check logs via request_id |
 
 ---
@@ -369,10 +377,34 @@ All runtime knobs are `vars` in `wrangler.jsonc` (safe defaults in code):
 | `BOOKING_HORIZON_DAYS` | `60` | how far ahead |
 | `CANCEL_CUTOFF_HOURS` | `24` | customer cutoff; admin ignores |
 | `CLOSED_WEEKDAYS` | `6` | 0=Mon…6=Sun, comma-separated |
-| `ALLOWED_ORIGINS` | `*` | comma-separated exact origins for CORS |
+| `ALLOWED_ORIGINS` | `http://localhost:4321,http://127.0.0.1:4321` | comma-separated exact origins; production is set in Wrangler |
 | `QUERY_TIMEOUT_SECONDS` | `8` | per-query asyncpg timeout |
 
 Secrets: `ADMIN_API_KEY` (required for `/admin/*`).
+
+## Security and request limits
+
+The Worker uses [Cloudflare's native rate-limit bindings](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/),
+configured in `wrangler.jsonc`: 120 requests/minute per client IP across the API,
+with separate 10/minute buckets for all customer booking operations combined
+(create/lookup/cancel) and failed/missing admin credentials. Valid staff requests
+use the general limit. Changing booking IDs, phone numbers, keys or
+`X-Forwarded-For` does not reset these counters. OPTIONS preflights are exempt.
+The trusted IP comes from Cloudflare's `CF-Connecting-IP` header.
+
+These are approximate counters per Cloudflare location, suited to abuse prevention,
+not strict global quotas. Both bindings are required, including in named Wrangler
+environments; missing/broken bindings return 503 instead of allowing unprotected
+requests. Standalone ASGI hosting must provide equivalent trusted bindings/edge
+protection; regression tests supply fake counters. Reserve the two namespace IDs
+for this application within your Cloudflare account.
+
+Requests from disallowed browser origins are rejected before handlers execute.
+POST/PUT require JSON, so ordinary HTML form posts cannot create or cancel bookings.
+CORS is not authentication: direct clients still require booking ownership/admin
+credentials where applicable. Responses disable caching and MIME sniffing, block
+framing and referrers, and set HSTS over HTTPS. Keep HTTPS at the public edge,
+use a strong random admin secret, and keep real secrets in Wrangler secrets.
 
 ## Before a public launch (no payments)
 
@@ -382,7 +414,7 @@ The following gaps still need a launch decision:
 | Priority | Work | Current behavior |
 |---|---|---|
 | Before accepting real appointments | Date-specific shop closures and barber time off, including lunch breaks and leave | Every active barber follows the same weekly shop hours; no date/time blockouts exist. Separate weekly schedules are only needed if staff hours differ. |
-| Before opening the API publicly | Rate limiting on create/lookup/cancel and admin attempts; bot protection on new bookings | Anyone can currently submit appointments using an unverified phone number. Add [Workers rate limiting](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/) and, for the public booking form, [Turnstile with server-side validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/). CORS does not stop direct API calls. |
+| If booking spam persists | Bot protection or phone verification on new bookings | IP rate limits are implemented. Phones remain unverified; consider [Turnstile with server-side validation](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/) or SMS verification if abuse warrants it. |
 | Before connecting a staff dashboard | A private way for the owner/staff to authenticate | The backend accepts a shared admin key. Enter it privately or keep it behind a staff sign-in/server; never bundle it into public JavaScript. Individual staff access can use [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/access-controls/applications/http-apps/self-hosted-public-app/) when needed. |
 | Before launch | Verify customer confirmation and return/cancel flow | The API returns a booking ID and supports lookup/cancellation. The customer must retain that reference. The frontend is outside this backend review. SMS/email reminders and rescheduling are useful follow-ups, not required for the first version. |
 | Before launch | Complete live configuration and an operations check | Set the real Hyperdrive ID with caching disabled, apply migrations, set the admin secret, configure real catalog/hours/origins, test booking then cancellation on staging, arrange uptime/error alerts and rehearse [Neon restore](https://neon.com/docs/postgres/backup-restore/branch-restore). Local checks do not verify these account settings. |
@@ -437,6 +469,6 @@ src/db.py                asyncpg via Hyperdrive / DATABASE_URL
 src/config.py            per-request settings from env
 src/errors.py            one error envelope + SQLSTATE mapping
 src/security.py          admin key + phone matching (constant-time)
-src/middleware.py        CORS + body-size limit (pure ASGI)
+src/middleware.py        CORS, native rate limits, security headers + body-size limit (pure ASGI)
 tests/                  API/Postgres regression suite + real Workers smoke check
 ```

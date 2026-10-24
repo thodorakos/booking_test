@@ -6,7 +6,7 @@ import admin
 import bookings
 import catalog
 from errors import install_error_handlers
-from middleware import BodyLimitMiddleware, CorsMiddleware
+from middleware import BodyLimitMiddleware, CorsMiddleware, RateLimitMiddleware
 
 app = FastAPI(
     title="Barbershop Booking API",
@@ -19,10 +19,11 @@ app = FastAPI(
     ),
 )
 
-# The last middleware added is outermost, so CORS also covers body-limit errors.
 app.add_middleware(BodyLimitMiddleware)
-app.add_middleware(CorsMiddleware)
+app.add_middleware(RateLimitMiddleware)
 app.include_router(catalog.router)
 app.include_router(bookings.router)
 app.include_router(admin.router)
 install_error_handlers(app)
+# Wrap the entire app so even unhandled errors carry CORS and security headers.
+app = CorsMiddleware(app)

@@ -77,7 +77,7 @@ export default function BookingFlow() {
       setUncertain(false);
       setBooking(result);
     } catch (failure) {
-      const ambiguous = !(failure instanceof ApiError) || failure.status === 0 || failure.status >= 500 || failure.code === 'INVALID_RESPONSE';
+      const ambiguous = uncertain || !(failure instanceof ApiError) || failure.status === 0 || failure.status >= 500 || failure.code === 'INVALID_RESPONSE';
       setUncertain(ambiguous);
       if (!ambiguous) pending.current = null;
       if (failure instanceof ApiError && ['SLOT_TAKEN', 'TOO_SOON', 'IN_PAST'].includes(failure.code)) { setSlot(null); setRevision((value) => value + 1); }

@@ -12,6 +12,12 @@
 
   "observability": { "enabled": true, "traces": { "enabled": true } },
 
+  // Edge counters per client IP; use account-unique namespace IDs.
+  "ratelimits": [
+    { "name": "API_RATE_LIMITER", "namespace_id": "101001", "simple": { "limit": 120, "period": 60 } },
+    { "name": "SENSITIVE_RATE_LIMITER", "namespace_id": "101002", "simple": { "limit": 10, "period": 60 } }
+  ],
+
   // Hyperdrive pools and accelerates the Neon connection.
   // Create yours first (see README step 2), then replace the id below:
   //   uv run pywrangler hyperdrive create barbershop-db --caching-disabled \

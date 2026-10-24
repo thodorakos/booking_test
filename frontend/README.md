@@ -23,7 +23,8 @@ an HTTP API origin.
   The same idempotency key and payload are reused on an uncertain retry; the form
   stays locked until that request’s outcome is known. Avoid closing or reloading
   the tab while confirmation is uncertain: pending retries live only in memory.
-- `/manage`: lookup and cancel by booking reference and the customer’s phone.
+- `/manage`: lookup and cancel by booking reference and the customer’s phone,
+  sent in JSON bodies so the phone stays out of request URLs.
 - `/admin`: sign in using the existing backend `ADMIN_API_KEY` (never a public env
   variable), view/filter/cancel appointments and add/edit/deactivate/reactivate
   barbers and services. Admin cancellations bypass the customer cutoff. The key
@@ -37,6 +38,21 @@ The existing shop branding/contact details are presentation content; configure
 those for your real shop before going live. Prices use the backend’s EUR cents;
 a missing price displays “Ask in shop”. Historical bookings use their saved price
 and duration. No SMS or payment integration is implied.
+
+The shared API helper throttles requests per tab: 90 public reads, 8 customer
+booking operations and 60 admin requests per minute. It honors the backend's
+`Retry-After` cooldown, including non-JSON 429 responses, without automatic retries.
+Reloading can reset frontend limits; the backend enforces IP limits independently.
+
+Astro generates a script-hash Content Security Policy for built pages, restricted
+to the configured API origin, local fonts and the existing image hosts. Inline
+style attributes remain allowed for the current UI; inline executable scripts
+are not allowed. Set `PUBLIC_API_URL` before building so CSP and API requests agree.
+`public/_headers` adds framing, MIME, referrer, browser-permission and HTTPS headers
+on Cloudflare Pages. Other static hosts must apply equivalent headers; Astro's
+dev/preview server does not apply Pages header rules. CSP is active in build/preview,
+not Astro dev mode. Existing input validation, React escaping, in-memory admin keys
+and booking idempotency remain in use.
 
 ## Checks
 

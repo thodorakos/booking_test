@@ -19,7 +19,7 @@ export default function ManageBooking() {
     event.preventDefault();
     if (inFlight.current) return;
     inFlight.current = true; setBusy(true); setError(''); setBooking(null);
-    try { setBooking(await api<Booking>(`/bookings/${encodeURIComponent(id.trim())}?${new URLSearchParams({ phone: phone.trim() })}`)); }
+    try { setBooking(await api<Booking>(`/bookings/${encodeURIComponent(id.trim())}/lookup`, { method: 'POST', body: JSON.stringify({ phone: phone.trim() }) })); }
     catch (failure) { setError(errorMessage(failure)); }
     finally { inFlight.current = false; setBusy(false); }
   }

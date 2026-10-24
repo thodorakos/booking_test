@@ -33,7 +33,7 @@ def admin_key_valid(request: Request, st: Settings) -> bool:
             "ADMIN_DISABLED",
             "Admin access is disabled: set the ADMIN_API_KEY secret to enable it.",
         )
-    if not hmac.compare_digest(provided, expected):
+    if not hmac.compare_digest(provided.encode("utf-8"), expected.encode("utf-8")):
         raise ApiError(401, "FORBIDDEN", "Invalid admin key.")
     return True
 

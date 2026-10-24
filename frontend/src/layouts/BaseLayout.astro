@@ -39,10 +39,10 @@ const ogImage =
     <meta name="twitter:card" content="summary_large_image" />
     {
       ldJson && (
-        <script type="application/ld+json" is:inline set:html={JSON.stringify(ldJson)} />
+        <script type="application/ld+json" is:inline set:html={JSON.stringify(ldJson).replace(/</g, '\\u003c')} />
       )
     }
-    <script is:inline>
+    <script>
       // Scroll reveals stay opt-in: without JS or IntersectionObserver the page
       // renders fully visible, and [data-reveal] styles only apply under html.js.
       if ('IntersectionObserver' in window) document.documentElement.classList.add('js');
@@ -75,7 +75,7 @@ const ogImage =
 
     <Footer />
 
-    <script is:inline>
+    <script>
       (function () {
         var els = document.querySelectorAll('[data-reveal]');
         if (!els.length) return;

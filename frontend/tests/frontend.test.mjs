@@ -3,10 +3,13 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import ts from 'typescript';
 
+const { URL, Response, AbortSignal } = globalThis;
+
+let moduleVersion = 0;
 async function load(file) {
   const source = await readFile(new URL(`../src/data/${file}.ts`, import.meta.url), 'utf8');
   const { outputText } = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } });
-  return import(`data:text/javascript,${encodeURIComponent(outputText)}`);
+  return import(`data:text/javascript,${encodeURIComponent(outputText)}#${moduleVersion++}`);
 }
 const { formatPrice } = await load('catalog');
 const { shopDate, addDays, formatWall, mergeSlots } = await load('availability');
@@ -42,6 +45,7 @@ test('API sends JSON, idempotency and admin headers without cookies or caching',
       assert.equal(url, 'http://localhost:8787/bookings');
       assert.equal(init.credentials, 'omit');
       assert.equal(init.cache, 'no-store');
+      assert.equal(init.referrerPolicy, 'no-referrer');
       assert.equal(init.headers.get('Content-Type'), 'application/json');
       assert.equal(init.headers.get('Idempotency-Key'), 'retry-key');
       assert.equal(init.headers.get('X-Admin-Key'), 'test-key');
@@ -63,4 +67,51 @@ test('API preserves machine-readable conflicts and validation details', async ()
     globalThis.fetch = async () => new Response('<html>Error</html>', { status: 502 });
     await assert.rejects(api('/bookings'), (error) => error.code === 'INVALID_RESPONSE' && error.status === 502);
   } finally { globalThis.fetch = original; }
+});
+
+test('API throttles concurrent booking requests across IDs and resets after a minute', async (t) => {
+  const { api } = await load('api');
+  let now = 100000;
+  t.mock.method(Date, 'now', () => now);
+  const fetch = t.mock.method(globalThis, 'fetch', async () => new Response('{}'));
+  await Promise.all(Array.from({ length: 8 }, (_, i) => api(`/bookings/id-${i}?phone=${i}`)));
+  await assert.rejects(api('/bookings/another/cancel', { method: 'POST', body: '{}' }), (error) => error.status === 429 && error.retryAfter === 60);
+  assert.equal(fetch.mock.callCount(), 8);
+  await api('/shop');
+  now += 60000;
+  await api('/bookings/another');
+  assert.equal(fetch.mock.callCount(), 10);
+});
+
+test('API honors numeric and dated Retry-After even for HTML rate-limit errors', async (t) => {
+  let now = Date.parse('2026-10-24T12:00:00Z');
+  t.mock.method(Date, 'now', () => now);
+  for (const [header, expected] of [['5', 5], [new Date(now + 7000).toUTCString(), 7], ['invalid', 60], [null, 60]]) {
+    now = Date.parse('2026-10-24T12:00:00Z');
+    const { api } = await load('api');
+    const fetch = t.mock.method(globalThis, 'fetch', async () => new Response('<html>Limited</html>', {
+      status: 429, headers: header ? { 'Retry-After': header } : {},
+    }));
+    await assert.rejects(api('/admin/barbers'), (error) => error.code === 'RATE_LIMITED' && error.retryAfter === expected);
+    await assert.rejects(api('/admin/services'), (error) => error.retryAfter === expected);
+    assert.equal(fetch.mock.callCount(), 1);
+    fetch.mock.mockImplementation(async () => new Response('{}'));
+    await api('/shop');
+    now += expected * 1000;
+    await api('/admin/barbers');
+    fetch.mock.restore();
+  }
+});
+
+test('API has separate public and admin budgets and does not charge pre-aborted requests', async (t) => {
+  const { api } = await load('api');
+  const fetch = t.mock.method(globalThis, 'fetch', async () => new Response('{}'));
+  const signal = AbortSignal.abort();
+  for (let i = 0; i < 10; i++) await assert.rejects(api('/bookings', { signal }), { name: 'AbortError' });
+  for (let i = 0; i < 90; i++) await api(`/availability?date=${i}`);
+  await assert.rejects(api('/services'), (error) => error.status === 429);
+  for (let i = 0; i < 60; i++) await api('/admin/services');
+  await assert.rejects(api('/admin/bookings'), (error) => error.status === 429);
+  await api('/bookings/reference');
+  assert.equal(fetch.mock.callCount(), 151);
 });

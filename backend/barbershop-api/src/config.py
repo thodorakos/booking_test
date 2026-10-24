@@ -27,7 +27,7 @@ DEFAULTS = {
     "BOOKING_HORIZON_DAYS": "60",
     "CANCEL_CUTOFF_HOURS": "24",
     "CLOSED_WEEKDAYS": "6",  # 0=Mon ... 6=Sun
-    "ALLOWED_ORIGINS": "*",
+    "ALLOWED_ORIGINS": "http://localhost:4321,http://127.0.0.1:4321",
     "QUERY_TIMEOUT_SECONDS": "8",
 }
 

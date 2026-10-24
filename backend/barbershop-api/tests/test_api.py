@@ -5,6 +5,7 @@ import uuid
 from dataclasses import replace
 from datetime import datetime, time, timedelta, timezone
 from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import httpx
 
@@ -19,12 +20,15 @@ BARBER = "11000000-0000-4000-8000-000000000001"
 SERVICE = "22000000-0000-4000-8000-000000000001"
 
 
-def client_for(env):
+def client_for(env, *, raise_app_exceptions=True):
+    for binding in ("API_RATE_LIMITER", "SENSITIVE_RATE_LIMITER"):
+        if not hasattr(env, binding):
+            setattr(env, binding, SimpleNamespace(limit=AsyncMock(return_value={"success": True})))
     async def application(scope, receive, send):
         scope["env"] = env
         await app(scope, receive, send)
     return httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=application), base_url="https://test.invalid"
+        transport=httpx.ASGITransport(app=application, raise_app_exceptions=raise_app_exceptions), base_url="https://test.invalid"
     )
 
 
@@ -122,6 +126,22 @@ class Bookings(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(rejected.json()["error"]["code"], "IDEMPOTENCY_CONFLICT")
             self.assertNotIn("customer_phone", rejected.text)
         self.assertEqual(await self.db.fetchval("SELECT count(*) FROM bookings"), 1)
+
+    async def test_private_lookup_and_cancel_require_the_owner_phone(self):
+        created = await self.create()
+        self.assertEqual(created.status_code, 201, created.text)
+        path = f"/bookings/{created.json()['id']}"
+        lookup = await self.client.post(path + "/lookup", json={"phone": "+30 690 000 0001"})
+        self.assertEqual(lookup.status_code, 200, lookup.text)
+        self.assertEqual(lookup.json(), created.json())
+        self.assertEqual(lookup.headers["cache-control"], "no-store")
+        for action in ("lookup", "cancel"):
+            response = await self.client.post(f"{path}/{action}", json={"phone": "+306900000099"})
+            self.assertEqual(response.status_code, 401, response.text)
+            self.assertNotIn(self.payload["customer_phone"], response.text)
+        legacy = await self.client.get(path, params={"phone": self.payload["customer_phone"]})
+        self.assertEqual(legacy.status_code, 200, legacy.text)
+        self.assertEqual(legacy.json()["status"], "confirmed")
 
     async def test_retry_survives_policy_and_catalog_changes(self):
         created = await self.create()

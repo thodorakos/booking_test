@@ -331,6 +331,12 @@ async def get_booking(booking_id: uuid.UUID, request: Request, phone: str | None
     return booking_out(row, st.tz)
 
 
+@router.post("/bookings/{booking_id}/lookup", response_model=BookingOut,
+             summary="Fetch a booking without putting the owner's phone in the URL")
+async def lookup_booking(booking_id: uuid.UUID, payload: CancelBookingRequest, request: Request):
+    return await get_booking(booking_id, request, phone=payload.phone)
+
+
 @router.post("/bookings/{booking_id}/cancel", response_model=BookingOut,
              summary="Cancel a booking (owner phone, before the cutoff)")
 async def cancel_booking(booking_id: uuid.UUID, payload: CancelBookingRequest, request: Request):
